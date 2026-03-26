@@ -4,14 +4,14 @@ import { useLeads } from '@/contexts/LeadsContext';
 import { useAuth } from '@/contexts/AuthContext';
 import StatusBadge from '@/components/StatusBadge';
 import PriorityDot from '@/components/PriorityDot';
-import PriorityModal from '@/components/PriorityModal';
 import ReassignModal from '@/components/ReassignModal';
+import StatusUpdateModal from '@/components/StatusUpdateModal';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { ExternalLink, MessageSquare, Send, Plus, X, Lock, RefreshCw } from 'lucide-react';
+import { ExternalLink, MessageSquare, Send, Plus, X, Lock, RefreshCw, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface LeadDetailDrawerProps {
@@ -20,21 +20,18 @@ interface LeadDetailDrawerProps {
   onClose: () => void;
 }
 
-const STATUS_FLOW: LeadStatus[] = ['assigned', 'inmail_sent', 'connection_sent', 'request_accepted', 'response_back'];
-
 const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
-  const { updateLead, addComment, comments, addReminder, removeReminder, setPriority } = useLeads();
+  const { updateLead, addComment, comments, addReminder, removeReminder, setPriority, addConnectNote, updateLeadStatus } = useLeads();
   const { user } = useAuth();
-  const [notes, setNotes] = useState('');
+  const [connectNote, setConnectNote] = useState('');
   const [comment, setComment] = useState('');
   const [reminderDate, setReminderDate] = useState('');
   const [reminderTime, setReminderTime] = useState('10:00');
   const [reassignOpen, setReassignOpen] = useState(false);
-  const [priorityModalOpen, setPriorityModalOpen] = useState(false);
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
 
   useEffect(() => {
     if (lead) {
-      setNotes(lead.response_notes || '');
       setReminderDate('');
       setReminderTime('10:00');
     }
@@ -46,38 +43,24 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
   const canReassign = user?.role === 'admin' || user?.role === 'sales_admin';
   const leadComments = comments.filter(c => c.lead_id === lead.id);
 
-  const handleStatusChange = (status: LeadStatus) => {
-    if (!isAssigned) return toast.error('Only the assigned user can change status');
-    // Enforce priority modal at request_accepted
-    if (status === 'request_accepted') {
-      setPriorityModalOpen(true);
-      return;
+  const handleStatusSubmit = (data: { status: LeadStatus; messageType: 'A' | 'B'; comment: string; priority?: PriorityColor }) => {
+    if (!user) return;
+    const roleLabel = user.role === 'admin' ? 'Admin' : user.role === 'sales_admin' ? 'Sales Admin' : 'Sales Rep';
+    updateLeadStatus(lead.id, data.status, data.messageType, data.comment, user.name, roleLabel, data.priority);
+    if (data.priority) {
+      const labels: Record<PriorityColor, string> = { red: 'Red', amber: 'Amber', green: 'Green', none: 'None' };
+      toast.success(`Status updated to ${STATUS_LABELS[data.status]} — Priority: ${labels[data.priority]}`);
+    } else {
+      toast.success(`Status updated to ${STATUS_LABELS[data.status]}`);
     }
-    updateLead(lead.id, { status });
-    toast.success(`Status updated to ${STATUS_LABELS[status]}`);
+    setStatusModalOpen(false);
   };
 
-  const handlePrioritySubmit = (priority: PriorityColor) => {
-    if (!lead || !user) return;
-    updateLead(lead.id, { status: 'request_accepted' as LeadStatus, priority_color: priority });
-    const labels: Record<PriorityColor, string> = { red: 'Red', amber: 'Amber', green: 'Green', none: 'None' };
-    addComment(lead.id, 'system', 'System', 'System',
-      `Status updated to Request Accepted and marked as ${labels[priority]} by ${user.name}`
-    );
-    toast.success(`Status updated to Request Accepted — Priority: ${labels[priority]}`);
-    setPriorityModalOpen(false);
-  };
-
-  const handleSelectMessage = (msg: 'A' | 'B') => {
-    if (!isAssigned) return toast.error('Only the assigned user can select messages');
-    updateLead(lead.id, { selected_message: msg });
-    toast.success(`Message ${msg} selected`);
-  };
-
-  const handleSaveNotes = () => {
-    if (!isAssigned) return toast.error('Only the assigned user can edit notes');
-    updateLead(lead.id, { response_notes: notes });
-    toast.success('Notes saved');
+  const handleAddConnectNote = () => {
+    if (!connectNote.trim() || !user || !isAssigned) return;
+    addConnectNote(lead.id, connectNote.trim(), user.name);
+    toast.success('Note added');
+    setConnectNote('');
   };
 
   const handleAddReminder = () => {
@@ -98,6 +81,11 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
     setComment('');
   };
 
+  const formatDate = (iso: string) => {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ', ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   return (
     <>
       <Sheet open={open} onOpenChange={onClose}>
@@ -107,6 +95,11 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
             <div className="flex items-center gap-2">
               <StatusBadge status={lead.status} />
               <PriorityDot priority={lead.priority_color} size="md" />
+              {lead.selected_message && (
+                <span className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">
+                  Msg {lead.selected_message}
+                </span>
+              )}
               {!isAssigned && (
                 <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
                   <Lock className="w-3 h-3" /> Read-only
@@ -192,25 +185,15 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
               <div className="space-y-2">
                 <div className={`p-3 rounded-lg border text-sm ${lead.selected_message === 'A' ? 'border-primary bg-primary/5' : 'border-border'}`}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-muted-foreground">Message A</span>
-                    {isAssigned && (
-                      <Button size="sm" variant={lead.selected_message === 'A' ? 'default' : 'outline'} className="h-6 text-xs"
-                        onClick={() => handleSelectMessage('A')}>
-                        {lead.selected_message === 'A' ? 'Selected' : 'Use A'}
-                      </Button>
-                    )}
+                    <span className="text-xs font-medium text-muted-foreground">Message A — Direct & Bold</span>
+                    {lead.selected_message === 'A' && <span className="text-xs font-medium text-primary">✓ Selected</span>}
                   </div>
                   <p className="text-foreground">{lead.message_a}</p>
                 </div>
                 <div className={`p-3 rounded-lg border text-sm ${lead.selected_message === 'B' ? 'border-primary bg-primary/5' : 'border-border'}`}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-muted-foreground">Message B</span>
-                    {isAssigned && (
-                      <Button size="sm" variant={lead.selected_message === 'B' ? 'default' : 'outline'} className="h-6 text-xs"
-                        onClick={() => handleSelectMessage('B')}>
-                        {lead.selected_message === 'B' ? 'Selected' : 'Use B'}
-                      </Button>
-                    )}
+                    <span className="text-xs font-medium text-muted-foreground">Message B — Consultative & Warm</span>
+                    {lead.selected_message === 'B' && <span className="text-xs font-medium text-primary">✓ Selected</span>}
                   </div>
                   <p className="text-foreground">{lead.message_b}</p>
                 </div>
@@ -219,39 +202,47 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
             <Separator />
 
-            {/* Status */}
+            {/* Status — now uses modal */}
             <section className="space-y-2">
               <h3 className="text-sm font-semibold text-foreground">
                 Status {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
               </h3>
-              {isAssigned ? (
-                <div className="flex flex-wrap gap-1.5">
-                  {STATUS_FLOW.map(s => (
-                    <Button key={s} size="sm" variant={lead.status === s ? 'default' : 'outline'} className="h-7 text-xs"
-                      onClick={() => handleStatusChange(s)}>
-                      {STATUS_LABELS[s]}
-                    </Button>
-                  ))}
-                </div>
-              ) : (
+              <div className="flex items-center gap-2">
                 <StatusBadge status={lead.status} />
-              )}
+                {isAssigned && (
+                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setStatusModalOpen(true)}>
+                    <Edit className="w-3 h-3" /> Update Status
+                  </Button>
+                )}
+              </div>
             </section>
 
             <Separator />
 
-            {/* Notes */}
+            {/* Connect Notes — Timeline Log */}
             <section className="space-y-2">
               <h3 className="text-sm font-semibold text-foreground">
-                Notes {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
+                Connect Notes {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
               </h3>
-              {isAssigned ? (
-                <>
-                  <Textarea placeholder="Add notes..." value={notes} onChange={e => setNotes(e.target.value)} rows={3} />
-                  <Button size="sm" onClick={handleSaveNotes}>Save Notes</Button>
-                </>
+              {lead.connect_notes.length > 0 ? (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {[...lead.connect_notes].reverse().map(note => (
+                    <div key={note.id} className="border-l-2 border-primary/30 pl-3 py-1">
+                      <p className="text-xs font-medium text-foreground">
+                        {note.user_name} — <span className="text-muted-foreground font-normal">{formatDate(note.created_at)}</span>
+                      </p>
+                      <p className="text-sm text-foreground mt-0.5">"{note.content}"</p>
+                    </div>
+                  ))}
+                </div>
               ) : (
-                <p className="text-sm text-muted-foreground">{lead.response_notes || 'No notes yet'}</p>
+                <p className="text-xs text-muted-foreground">No notes yet</p>
+              )}
+              {isAssigned && (
+                <div className="flex gap-2">
+                  <Textarea placeholder="Add a connect note..." value={connectNote} onChange={e => setConnectNote(e.target.value)} rows={2} className="text-sm" />
+                  <Button size="sm" className="h-auto self-end" onClick={handleAddConnectNote}>Add</Button>
+                </div>
               )}
             </section>
 
@@ -322,7 +313,7 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
           </div>
         </SheetContent>
       </Sheet>
-      <PriorityModal open={priorityModalOpen} onClose={() => setPriorityModalOpen(false)} onSubmit={handlePrioritySubmit} />
+      <StatusUpdateModal open={statusModalOpen} onClose={() => setStatusModalOpen(false)} lead={lead} onSubmit={handleStatusSubmit} />
       <ReassignModal lead={lead} open={reassignOpen} onClose={() => setReassignOpen(false)} />
     </>
   );
