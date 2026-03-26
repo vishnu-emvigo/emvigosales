@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const STATUS_FLOW: LeadStatus[] = ['assigned', 'inmail_sent', 'connection_sent', 'request_accepted', 'response_back'];
+const COLOR_REQUIRED_STATUSES: LeadStatus[] = ['request_accepted', 'response_back'];
 
 interface StatusUpdateModalProps {
   open: boolean;
