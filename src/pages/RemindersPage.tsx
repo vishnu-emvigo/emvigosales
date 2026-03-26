@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { MOCK_LEADS } from '@/data/mockData';
+import { useLeads } from '@/contexts/LeadsContext';
+import { useAuth } from '@/contexts/AuthContext';
 import LeadDetailDrawer from '@/components/LeadDetailDrawer';
 import { Lead } from '@/types/leads';
 import StatusBadge from '@/components/StatusBadge';
@@ -8,9 +9,14 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
 const RemindersPage = () => {
+  const { leads } = useLeads();
+  const { user } = useAuth();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const today = new Date().toISOString().split('T')[0];
-  const reminders = MOCK_LEADS.filter(l => l.reminder_date && l.reminder_date <= today);
+
+  const myLeads = user?.role === 'sales_rep' ? leads.filter(l => l.assigned_to === user.name) : leads;
+  const reminders = myLeads.filter(l => l.reminder_date && l.reminder_date <= today);
+  const currentLead = selectedLead ? leads.find(l => l.id === selectedLead.id) || null : null;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
@@ -52,7 +58,7 @@ const RemindersPage = () => {
           </table>
         </div>
       )}
-      <LeadDetailDrawer lead={selectedLead} open={!!selectedLead} onClose={() => setSelectedLead(null)} />
+      <LeadDetailDrawer lead={currentLead} open={!!currentLead} onClose={() => setSelectedLead(null)} />
     </motion.div>
   );
 };

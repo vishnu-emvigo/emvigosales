@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MOCK_LEADS, MOCK_REPS } from '@/data/mockData';
+import { useLeads } from '@/contexts/LeadsContext';
 import LeadsTable from '@/components/LeadsTable';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -8,14 +8,17 @@ import { motion } from 'framer-motion';
 import { Shuffle } from 'lucide-react';
 
 const AssignmentPage = () => {
+  const { leads, reps, assignLeads, autoDistribute } = useLeads();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [assignTo, setAssignTo] = useState('');
 
-  const unassigned = MOCK_LEADS.filter(l => l.status === 'not_assigned');
-  const activeReps = MOCK_REPS.filter(r => r.status === 'active');
+  const unassigned = leads.filter(l => l.status === 'not_assigned');
+  const activeReps = reps.filter(r => r.status === 'active');
 
   const handleManualAssign = () => {
     if (selectedIds.length === 0 || !assignTo) return toast.error('Select leads and a rep');
+    const rep = activeReps.find(r => r.name === assignTo);
+    assignLeads(selectedIds, assignTo, rep?.linkedin_profile || '');
     toast.success(`${selectedIds.length} leads assigned to ${assignTo}`);
     setSelectedIds([]);
     setAssignTo('');
@@ -23,6 +26,7 @@ const AssignmentPage = () => {
 
   const handleAutoDistribute = () => {
     if (unassigned.length === 0) return toast.info('No unassigned leads');
+    autoDistribute();
     const perRep = Math.ceil(unassigned.length / activeReps.length);
     toast.success(`${unassigned.length} leads auto-distributed (~${perRep} per rep)`);
   };

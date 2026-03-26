@@ -1,48 +1,96 @@
 import { Lead, Comment, SalesRep } from '@/types/leads';
 
-const companies = ['TechCorp', 'InnovateCo', 'DataFlow', 'CloudScale', 'NextGen AI', 'FinServ Pro', 'GrowthHub', 'SaaS Solutions', 'Digital Ventures', 'SmartOps'];
-const names = ['Alice Johnson', 'Bob Smith', 'Carol Williams', 'David Brown', 'Emma Davis', 'Frank Wilson', 'Grace Lee', 'Henry Taylor', 'Ivy Chen', 'Jack Martinez', 'Karen White', 'Leo Anderson', 'Mia Thomas', 'Noah Jackson', 'Olivia Garcia'];
-const locations = ['San Francisco, CA', 'New York, NY', 'Austin, TX', 'Seattle, WA', 'Chicago, IL', 'Boston, MA', 'Denver, CO', 'Miami, FL', 'Portland, OR', 'Atlanta, GA'];
-const statuses: Lead['status'][] = ['not_assigned', 'assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back'];
-
-export const MOCK_REPS: SalesRep[] = [
-  { id: 'rep1', name: 'John Sales', email: 'john@company.com', status: 'active', linkedin_profile: 'linkedin.com/in/johnsales', leads_count: 24 },
-  { id: 'rep2', name: 'Jane Outreach', email: 'jane@company.com', status: 'active', linkedin_profile: 'linkedin.com/in/janeoutreach', leads_count: 18 },
-  { id: 'rep3', name: 'Mike Connect', email: 'mike@company.com', status: 'on_leave', linkedin_profile: 'linkedin.com/in/mikeconnect', leads_count: 12 },
-  { id: 'rep4', name: 'Sara Networker', email: 'sara@company.com', status: 'active', linkedin_profile: 'linkedin.com/in/saranetworker', leads_count: 21 },
+export const INITIAL_REPS: SalesRep[] = [
+  { id: 'rep1', name: 'John Sales', email: 'john@company.com', status: 'active', linkedin_profile: 'https://linkedin.com/in/johnsales', leads_count: 0 },
+  { id: 'rep2', name: 'Jane Outreach', email: 'jane@company.com', status: 'active', linkedin_profile: 'https://linkedin.com/in/janeoutreach', leads_count: 0 },
+  { id: 'rep3', name: 'Mike Connect', email: 'mike@company.com', status: 'active', linkedin_profile: 'https://linkedin.com/in/mikeconnect', leads_count: 0 },
 ];
 
-export const generateMockLeads = (count: number = 80): Lead[] => {
-  return Array.from({ length: count }, (_, i) => {
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
-    const rep = status !== 'not_assigned' ? MOCK_REPS[Math.floor(Math.random() * MOCK_REPS.length)] : null;
-    return {
-      id: `lead-${i + 1}`,
-      sr_no: i + 1,
-      linkedin_url: `https://linkedin.com/in/${names[i % names.length].toLowerCase().replace(' ', '')}`,
-      full_name: names[i % names.length],
-      company: companies[i % companies.length],
-      location: locations[i % locations.length],
-      company_profile: `${companies[i % companies.length]} is a leading provider of enterprise solutions, specializing in digital transformation and cloud-native technologies. Founded in 2015, they serve 500+ clients globally.`,
-      person_summary: `${names[i % names.length]} is a senior decision-maker with 10+ years of experience in enterprise technology. Currently leading digital transformation initiatives at ${companies[i % companies.length]}.`,
-      message_a: `Hi ${names[i % names.length].split(' ')[0]}, I noticed your work at ${companies[i % companies.length]} in digital transformation. We help companies like yours streamline operations — would love to connect and share insights.`,
-      message_b: `Hello ${names[i % names.length].split(' ')[0]}, impressive growth at ${companies[i % companies.length]}! We've helped similar companies achieve 3x ROI on their outreach. Interested in a quick chat?`,
-      status,
-      assigned_to: rep?.name ?? null,
-      selected_message: status !== 'not_assigned' ? (Math.random() > 0.5 ? 'A' : 'B') : null,
-      linkedin_profile_used: rep?.linkedin_profile ?? null,
-      response_notes: status === 'response_back' ? 'Interested in a demo call next week.' : null,
-      reminder_date: Math.random() > 0.7 ? new Date(Date.now() + Math.random() * 7 * 86400000).toISOString().split('T')[0] : null,
-      batch_id: `BATCH-${String(Math.floor(i / 20) + 1).padStart(3, '0')}`,
-      upload_date: new Date(Date.now() - Math.random() * 14 * 86400000).toISOString().split('T')[0],
-    };
-  });
-};
-
-export const MOCK_LEADS = generateMockLeads();
-
-export const MOCK_COMMENTS: Comment[] = [
-  { id: 'c1', lead_id: 'lead-1', user_id: '2', user_name: 'Sarah Manager', user_role: 'Sales Admin', content: 'Please prioritize this lead — they showed interest at the conference.', created_at: new Date(Date.now() - 86400000).toISOString() },
-  { id: 'c2', lead_id: 'lead-1', user_id: '3', user_name: 'John Sales', user_role: 'Sales Rep', content: 'Got it! Sent connection request today.', created_at: new Date(Date.now() - 43200000).toISOString() },
-  { id: 'c3', lead_id: 'lead-2', user_id: '1', user_name: 'Admin User', user_role: 'Admin', content: 'This company is a key target for Q1.', created_at: new Date(Date.now() - 172800000).toISOString() },
+export const INITIAL_LEADS: Lead[] = [
+  {
+    id: 'lead-1', sr_no: 1,
+    linkedin_url: 'https://linkedin.com/in/rachelfinegold',
+    full_name: 'Rachel Finegold',
+    company: 'Stealth AI Startup',
+    location: 'London',
+    company_profile: 'Stealth AI Startup is an early-stage company developing cutting-edge artificial intelligence solutions for enterprise automation. Operating in stealth mode, they are building proprietary ML models for workflow optimization.',
+    person_summary: 'Rachel Finegold is a co-founder at Stealth AI Startup with deep expertise in machine learning and enterprise software. Previously led AI initiatives at a top-tier consulting firm.',
+    message_a: 'Hi Rachel, I came across your work at Stealth AI Startup and was impressed by the innovation in enterprise automation. We help AI-focused companies scale their outreach - would love to connect and share ideas.',
+    message_b: 'Hello Rachel, exciting things happening at Stealth AI Startup! We have helped similar early-stage AI companies achieve 3x pipeline growth. Open to a quick chat?',
+    status: 'not_assigned', assigned_to: null, selected_message: null,
+    linkedin_profile_used: null, response_notes: null, reminder_date: null,
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+  },
+  {
+    id: 'lead-2', sr_no: 2,
+    linkedin_url: 'https://linkedin.com/in/alibahsoun',
+    full_name: 'Ali Bahsoun',
+    company: 'MediShout',
+    location: 'London',
+    company_profile: 'MediShout is a healthtech platform streamlining hospital operations through real-time issue reporting and resolution. Used by NHS trusts across the UK to improve patient care efficiency.',
+    person_summary: 'Ali Bahsoun is the CEO of MediShout, a serial entrepreneur with a background in healthcare technology and hospital operations management.',
+    message_a: 'Hi Ali, your work at MediShout in healthcare operations is truly impactful. We specialise in helping healthtech companies expand their B2B outreach - let us connect.',
+    message_b: 'Hello Ali, impressive traction with MediShout across NHS trusts! We have helped similar healthtech companies accelerate growth. Interested in a brief conversation?',
+    status: 'not_assigned', assigned_to: null, selected_message: null,
+    linkedin_profile_used: null, response_notes: null, reminder_date: null,
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+  },
+  {
+    id: 'lead-3', sr_no: 3,
+    linkedin_url: 'https://linkedin.com/in/ioannischronakis',
+    full_name: 'Ioannis Chronakis',
+    company: 'Deontics',
+    location: 'London',
+    company_profile: 'Deontics is an AI-powered clinical decision support company that helps healthcare providers deliver personalised care pathways. Their platform integrates with EHR systems to provide real-time recommendations.',
+    person_summary: 'Ioannis Chronakis is a senior leader at Deontics with extensive experience in health informatics and clinical decision systems.',
+    message_a: 'Hi Ioannis, I noticed your work at Deontics in clinical decision support - fascinating space. We help health-AI companies like yours build strong sales pipelines. Would love to connect.',
+    message_b: 'Hello Ioannis, Deontics is doing groundbreaking work in personalised care. We have helped similar companies achieve 2x outreach efficiency. Fancy a quick call?',
+    status: 'not_assigned', assigned_to: null, selected_message: null,
+    linkedin_profile_used: null, response_notes: null, reminder_date: null,
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+  },
+  {
+    id: 'lead-4', sr_no: 4,
+    linkedin_url: 'https://linkedin.com/in/jonathanboase',
+    full_name: 'Jonathan Boase',
+    company: 'AROai',
+    location: 'UK',
+    company_profile: 'AROai provides AI-driven analytics for the real estate and property sector, helping investors and developers make data-informed decisions on asset performance and market trends.',
+    person_summary: 'Jonathan Boase is a key executive at AROai bringing together property expertise and AI innovation to transform real estate analytics.',
+    message_a: 'Hi Jonathan, your work at AROai combining AI with property analytics is really compelling. We help proptech companies like yours accelerate B2B growth - let us connect.',
+    message_b: 'Hello Jonathan, exciting developments at AROai! We have helped similar proptech companies build robust sales pipelines. Would you be open to a brief chat?',
+    status: 'not_assigned', assigned_to: null, selected_message: null,
+    linkedin_profile_used: null, response_notes: null, reminder_date: null,
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+  },
+  {
+    id: 'lead-5', sr_no: 5,
+    linkedin_url: 'https://linkedin.com/in/zoerobson',
+    full_name: 'Zoe Robson',
+    company: 'Joyvie Health',
+    location: 'UK',
+    company_profile: 'Joyvie Health is a digital health company focused on women\'s wellness and hormonal health, offering personalised treatment plans through an innovative online platform.',
+    person_summary: 'Zoe Robson is a founder at Joyvie Health, passionate about improving women\'s health outcomes through technology and personalised care solutions.',
+    message_a: 'Hi Zoe, I was inspired by what Joyvie Health is doing for women\'s wellness. We help digital health companies scale outreach efficiently - would love to connect and share insights.',
+    message_b: 'Hello Zoe, Joyvie Health\'s approach to personalised hormonal health is truly innovative! We have helped similar healthtech startups grow 3x faster. Open to a quick chat?',
+    status: 'not_assigned', assigned_to: null, selected_message: null,
+    linkedin_profile_used: null, response_notes: null, reminder_date: null,
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+  },
+  {
+    id: 'lead-6', sr_no: 6,
+    linkedin_url: 'https://linkedin.com/in/oliverharrison',
+    full_name: 'Oliver Harrison',
+    company: 'Koa Health',
+    location: 'London',
+    company_profile: 'Koa Health is a digital mental health company offering evidence-based tools and programmes for employers and health systems. Their platform helps organisations support employee wellbeing at scale.',
+    person_summary: 'Oliver Harrison is a senior executive at Koa Health with a strong background in digital health, mental wellness, and enterprise SaaS solutions.',
+    message_a: 'Hi Oliver, Koa Health\'s work in digital mental health is really impressive. We help healthtech companies like yours expand B2B outreach - let us connect and explore synergies.',
+    message_b: 'Hello Oliver, the impact Koa Health is making in workplace mental health is remarkable! We have helped similar companies build strong sales pipelines. Interested in a brief chat?',
+    status: 'not_assigned', assigned_to: null, selected_message: null,
+    linkedin_profile_used: null, response_notes: null, reminder_date: null,
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+  },
 ];
+
+export const INITIAL_COMMENTS: Comment[] = [];
