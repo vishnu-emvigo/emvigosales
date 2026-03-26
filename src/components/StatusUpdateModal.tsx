@@ -15,7 +15,7 @@ interface StatusUpdateModalProps {
   onSubmit: (data: {
     status: LeadStatus;
     messageType: 'A' | 'B';
-    comment: string;
+    connectNote: string;
     priority?: PriorityColor;
   }) => void;
 }
