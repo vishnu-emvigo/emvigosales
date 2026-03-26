@@ -30,6 +30,7 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
   const [reps, setReps] = useState<SalesRep[]>(INITIAL_REPS);
   const [comments, setComments] = useState<Comment[]>(INITIAL_COMMENTS);
+  const [globalFollowUpHours, setGlobalFollowUpHours] = useState<number | null>(null);
 
   const updateLead = useCallback((id: string, updates: Partial<Lead>) => {
     setLeads(prev => prev.map(l => l.id === id ? { ...l, ...updates } : l));
