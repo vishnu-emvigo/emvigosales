@@ -38,6 +38,7 @@ export interface Lead {
   linkedin_profile_used: string | null;
   response_notes: string | null;
   reminders: Reminder[];
+  connect_notes: ConnectNote[];
   batch_id: string;
   upload_date: string;
   priority_color: PriorityColor;
