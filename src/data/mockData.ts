@@ -17,7 +17,7 @@ export const INITIAL_LEADS: Lead[] = [
     person_summary: 'Rachel Finegold is a co-founder at Stealth AI Startup with deep expertise in machine learning and enterprise software. Previously led AI initiatives at a top-tier consulting firm.',
     message_a: 'Hi Rachel, I came across your work at Stealth AI Startup and was impressed by the innovation in enterprise automation. We help AI-focused companies scale their outreach - would love to connect and share ideas.',
     message_b: 'Hello Rachel, exciting things happening at Stealth AI Startup! We have helped similar early-stage AI companies achieve 3x pipeline growth. Open to a quick chat?',
-    status: 'not_assigned', assigned_to: null, selected_message: null,
+    status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null, selected_message: null,
     linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
