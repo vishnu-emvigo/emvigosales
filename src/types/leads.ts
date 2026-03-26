@@ -14,6 +14,13 @@ export interface Reminder {
   datetime: string; // ISO string e.g. "2026-03-26T10:00"
 }
 
+export interface ConnectNote {
+  id: string;
+  content: string;
+  user_name: string;
+  created_at: string;
+}
+
 export interface Lead {
   id: string;
   sr_no: number;
