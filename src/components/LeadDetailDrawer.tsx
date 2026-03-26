@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ExternalLink, MessageSquare, Send, Plus, X, Lock, RefreshCw, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -59,8 +60,12 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
   const handleAddConnectNote = () => {
     if (!connectNote.trim() || !user || !isAssigned) return;
+    if (lead.connect_notes.length > 0) {
+      toast.error('Connect Note has already been submitted and cannot be modified');
+      return;
+    }
     addConnectNote(lead.id, connectNote.trim(), user.name);
-    toast.success('Note added');
+    toast.success('Connect Note submitted');
     setConnectNote('');
   };
 
@@ -135,31 +140,48 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
             <Separator />
 
-            {/* Priority — only editable if assigned */}
+            {/* Priority — only editable if assigned AND status is request_accepted or response_back */}
             <section className="space-y-2">
               <h3 className="text-sm font-semibold text-foreground">
                 Priority {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
               </h3>
-              {isAssigned ? (
-                <div className="flex items-center gap-3">
-                  {(['red', 'amber', 'green', 'none'] as PriorityColor[]).map(p => {
-                    const labels: Record<PriorityColor, string> = { red: '🔴 Red', amber: '🟠 Amber', green: '🟢 Green', none: 'None' };
-                    return (
-                      <Button
-                        key={p}
-                        size="sm"
-                        variant={lead.priority_color === p ? 'default' : 'outline'}
-                        className="h-7 text-xs"
-                        onClick={() => setPriority(lead.id, p, user?.name || '')}
-                      >
-                        {labels[p]}
-                      </Button>
-                    );
-                  })}
-                </div>
-              ) : (
-                <PriorityDot priority={lead.priority_color} size="md" />
-              )}
+              {(() => {
+                const colorEligible = lead.status === 'request_accepted' || lead.status === 'response_back';
+                if (isAssigned && colorEligible) {
+                  return (
+                    <div className="flex items-center gap-3">
+                      {(['red', 'amber', 'green'] as PriorityColor[]).map(p => {
+                        const labels: Record<PriorityColor, string> = { red: '🔴 Red', amber: '🟠 Amber', green: '🟢 Green', none: 'None' };
+                        return (
+                          <Button
+                            key={p}
+                            size="sm"
+                            variant={lead.priority_color === p ? 'default' : 'outline'}
+                            className="h-7 text-xs"
+                            onClick={() => setPriority(lead.id, p, user?.name || '')}
+                          >
+                            {labels[p]}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+                if (!colorEligible) {
+                  return (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="inline-flex items-center gap-1 text-xs text-muted-foreground cursor-default">
+                          <PriorityDot priority={lead.priority_color} size="md" />
+                          <span className="ml-1 italic">Available after Request Accepted</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Color can only be selected after Request Accepted stage</TooltipContent>
+                    </Tooltip>
+                  );
+                }
+                return <PriorityDot priority={lead.priority_color} size="md" />;
+              })()}
             </section>
 
             <Separator />
@@ -220,10 +242,10 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
             <Separator />
 
-            {/* Connect Notes — Timeline Log */}
+            {/* Connect Note — One-time only */}
             <section className="space-y-2">
               <h3 className="text-sm font-semibold text-foreground">
-                Connect Notes {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
+                Connect Note {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
               </h3>
               {lead.connect_notes.length > 0 ? (
                 <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -235,15 +257,22 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
                       <p className="text-sm text-foreground mt-0.5">"{note.content}"</p>
                     </div>
                   ))}
+                  {isAssigned && (
+                    <p className="text-xs text-muted-foreground italic flex items-center gap-1">
+                      <Lock className="w-3 h-3" /> Connect Note has been submitted and is locked
+                    </p>
+                  )}
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">No notes yet</p>
-              )}
-              {isAssigned && (
-                <div className="flex gap-2">
-                  <Textarea placeholder="Add a connect note..." value={connectNote} onChange={e => setConnectNote(e.target.value)} rows={2} className="text-sm" />
-                  <Button size="sm" className="h-auto self-end" onClick={handleAddConnectNote}>Add</Button>
-                </div>
+                <>
+                  <p className="text-xs text-muted-foreground">No connect note yet</p>
+                  {isAssigned && (
+                    <div className="flex gap-2">
+                      <Textarea placeholder="Add your connect note (one-time only)..." value={connectNote} onChange={e => setConnectNote(e.target.value)} rows={2} className="text-sm" />
+                      <Button size="sm" className="h-auto self-end" onClick={handleAddConnectNote}>Submit</Button>
+                    </div>
+                  )}
+                </>
               )}
             </section>
 

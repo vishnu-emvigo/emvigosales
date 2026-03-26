@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const STATUS_FLOW: LeadStatus[] = ['assigned', 'inmail_sent', 'connection_sent', 'request_accepted', 'response_back'];
+const COLOR_REQUIRED_STATUSES: LeadStatus[] = ['request_accepted', 'response_back'];
 
 interface StatusUpdateModalProps {
   open: boolean;
@@ -27,14 +28,14 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
   const [priority, setPriority] = useState<PriorityColor | ''>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const needsPriority = status === 'request_accepted';
+  const needsPriority = COLOR_REQUIRED_STATUSES.includes(status as LeadStatus);
 
   const validate = () => {
     const errs: Record<string, string> = {};
     if (!status) errs.status = 'Status is required';
     if (!messageType) errs.messageType = 'Message type must be selected';
     if (!connectNote.trim()) errs.connectNote = 'Connect note is required';
-    if (needsPriority && !priority) errs.priority = 'Priority is required for Request Accepted';
+    if (needsPriority && !priority) errs.priority = 'Priority color is mandatory for this status';
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
