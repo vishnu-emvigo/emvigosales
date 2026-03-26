@@ -16,6 +16,8 @@ interface LeadsContextType {
   addLeads: (newLeads: Lead[]) => void;
   addReminder: (leadId: string, datetime: string) => void;
   removeReminder: (leadId: string, reminderId: string) => void;
+  reassignLead: (leadId: string, newAssignee: string, newLinkedin: string, reason: string, performedBy: string) => void;
+  setPriority: (leadId: string, priority: PriorityColor, userName: string) => void;
 }
 
 const LeadsContext = createContext<LeadsContextType | null>(null);
@@ -109,11 +111,48 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     ));
   }, []);
 
+  const reassignLead = useCallback((leadId: string, newAssignee: string, newLinkedin: string, reason: string, performedBy: string) => {
+    setLeads(prev => {
+      const lead = prev.find(l => l.id === leadId);
+      if (!lead) return prev;
+      const oldAssignee = lead.assigned_to || 'Unassigned';
+      // Add system comment
+      const systemComment: Comment = {
+        id: `c-sys-${Date.now()}`,
+        lead_id: leadId,
+        user_id: 'system',
+        user_name: 'System',
+        user_role: 'System',
+        content: `Lead reassigned from ${oldAssignee} to ${newAssignee} by ${performedBy}${reason ? ` — Reason: ${reason}` : ''}`,
+        created_at: new Date().toISOString(),
+      };
+      setComments(prev => [...prev, systemComment]);
+      return prev.map(l =>
+        l.id === leadId ? { ...l, assigned_to: newAssignee, linkedin_profile_used: newLinkedin } : l
+      );
+    });
+  }, []);
+
+  const setPriority = useCallback((leadId: string, priority: PriorityColor, userName: string) => {
+    setLeads(prev => prev.map(l => l.id === leadId ? { ...l, priority_color: priority } : l));
+    const labels: Record<PriorityColor, string> = { red: 'Red (High)', amber: 'Amber (Medium)', green: 'Green (Low)', none: 'None' };
+    const systemComment: Comment = {
+      id: `c-sys-${Date.now()}`,
+      lead_id: leadId,
+      user_id: 'system',
+      user_name: 'System',
+      user_role: 'System',
+      content: `Priority marked as ${labels[priority]} by ${userName}`,
+      created_at: new Date().toISOString(),
+    };
+    setComments(prev => [...prev, systemComment]);
+  }, []);
+
   return (
     <LeadsContext.Provider value={{
       leads, reps, comments, updateLead, assignLeads, autoDistribute,
       addComment, toggleRepLeave, reassignLeadsFromRep, addLeads,
-      addReminder, removeReminder,
+      addReminder, removeReminder, reassignLead, setPriority,
     }}>
       {children}
     </LeadsContext.Provider>
