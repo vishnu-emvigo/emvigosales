@@ -2,10 +2,10 @@ import { Lead, LeadStatus, STATUS_LABELS } from '@/types/leads';
 import { useNavigate } from 'react-router-dom';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
-const FUNNEL_STAGES: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back', 'meeting', 'converted_to_customer'];
+const FUNNEL_STAGES: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back', 'converted_to_customer'];
 
 const STAGE_COLORS = [
-  'bg-blue-500', 'bg-amber-500', 'bg-orange-500', 'bg-emerald-500', 'bg-green-600', 'bg-purple-500', 'bg-teal-500',
+  'bg-blue-500', 'bg-amber-500', 'bg-orange-500', 'bg-emerald-500', 'bg-green-600', 'bg-teal-500',
 ];
 
 interface Props { leads: Lead[] }

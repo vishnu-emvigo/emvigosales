@@ -1,4 +1,4 @@
-export type LeadStatus = 'not_assigned' | 'assigned' | 'mail_sent' | 'connection_sent' | 'request_accepted' | 'response_back' | 'meeting' | 'converted_to_customer';
+export type LeadStatus = 'not_assigned' | 'assigned' | 'mail_sent' | 'connection_sent' | 'request_accepted' | 'response_back' | 'converted_to_customer';
 
 export type PriorityColor = 'red' | 'amber' | 'green' | 'none';
 
@@ -62,7 +62,6 @@ export const STATUS_LABELS: Record<LeadStatus, string> = {
   connection_sent: 'Connection Sent',
   request_accepted: 'Request Accepted',
   response_back: 'Response Back',
-  meeting: 'Meeting',
   converted_to_customer: 'Converted to Customer',
 };
 
@@ -73,7 +72,6 @@ export const STATUS_COLORS: Record<LeadStatus, string> = {
   connection_sent: 'bg-orange-100 text-orange-700',
   request_accepted: 'bg-emerald-100 text-emerald-700',
   response_back: 'bg-green-100 text-green-700',
-  meeting: 'bg-purple-100 text-purple-700',
   converted_to_customer: 'bg-teal-100 text-teal-700',
 };
 
