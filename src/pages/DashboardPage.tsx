@@ -10,7 +10,7 @@ import InactivityAlerts from '@/components/dashboard/InactivityAlerts';
 import CommentsActivity from '@/components/dashboard/CommentsActivity';
 import PriorityDistribution from '@/components/dashboard/PriorityDistribution';
 import HighPriorityAlerts from '@/components/dashboard/HighPriorityAlerts';
-import { Users, UserX, Activity, CheckCircle2, TrendingUp, Upload, ClipboardList, AlertTriangle } from 'lucide-react';
+import { Users, UserX, Activity, CheckCircle2, TrendingUp, Upload, ClipboardList, AlertTriangle, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const DashboardPage = () => {
@@ -29,8 +29,16 @@ const DashboardPage = () => {
   const assignedTotal = leads.filter(l => l.status !== 'not_assigned').length;
   const conversionRate = assignedTotal > 0 ? Math.round((responseBack / assignedTotal) * 100) : 0;
 
+  // Priority counts
+  const redCount = leads.filter(l => l.priority_color === 'red').length;
+  const amberCount = leads.filter(l => l.priority_color === 'amber').length;
+  const greenCount = leads.filter(l => l.priority_color === 'green').length;
+
   const myLeads = leads.filter(l => l.assigned_to === user?.name);
   const myPending = myLeads.filter(l => l.status === 'assigned').length;
+  const myRed = myLeads.filter(l => l.priority_color === 'red').length;
+  const myAmber = myLeads.filter(l => l.priority_color === 'amber').length;
+  const myGreen = myLeads.filter(l => l.priority_color === 'green').length;
 
   // ─── SALES REP DASHBOARD ─────────────────────────
   if (isRep) {
@@ -48,6 +56,14 @@ const DashboardPage = () => {
             icon={<TrendingUp className="w-5 h-5" />}
           />
         </div>
+
+        {/* Priority KPI Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <KPICard title="🔴 Red Leads" value={myRed} icon={<Flame className="w-5 h-5" />} href="/my-leads?priority=red" alert={myRed > 0} tooltip="Hot leads requiring immediate action" />
+          <KPICard title="🟠 Amber Leads" value={myAmber} icon={<AlertTriangle className="w-5 h-5" />} href="/my-leads?priority=amber" tooltip="Warm leads needing follow-up" />
+          <KPICard title="🟢 Green Leads" value={myGreen} icon={<CheckCircle2 className="w-5 h-5" />} href="/my-leads?priority=green" tooltip="Low urgency leads" />
+        </div>
+
         <StatusMiniCards leads={myLeads} />
         <PriorityDistribution leads={myLeads} title="My Priority View" />
         <RemindersPanel leads={myLeads} userName={user?.name} />
@@ -67,6 +83,13 @@ const DashboardPage = () => {
           <KPICard title="Active" value={activeLeads} icon={<Activity className="w-5 h-5" />} tooltip="Assigned, inmail sent, or connection sent" />
           <KPICard title="Response Back" value={responseBack} icon={<CheckCircle2 className="w-5 h-5" />} />
           <KPICard title="Conversion Rate" value={`${conversionRate}%`} icon={<TrendingUp className="w-5 h-5" />} tooltip="Response back / total assigned" />
+        </div>
+
+        {/* Priority KPI Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <KPICard title="🔴 Red Leads" value={redCount} icon={<Flame className="w-5 h-5" />} href="/leads?priority=red" alert={redCount > 0} tooltip="Hot leads requiring immediate action" />
+          <KPICard title="🟠 Amber Leads" value={amberCount} icon={<AlertTriangle className="w-5 h-5" />} href="/leads?priority=amber" tooltip="Warm leads needing follow-up" />
+          <KPICard title="🟢 Green Leads" value={greenCount} icon={<CheckCircle2 className="w-5 h-5" />} href="/leads?priority=green" tooltip="Low urgency leads" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -99,6 +122,13 @@ const DashboardPage = () => {
         <KPICard title="Assigned to Me" value={myLeads.length} icon={<ClipboardList className="w-5 h-5" />} href="/my-leads" tooltip="Leads you're working on" />
         <KPICard title="Uploaded Today" value={uploadedToday} icon={<Upload className="w-5 h-5" />} />
         <KPICard title="Pending Actions" value={myPending} icon={<AlertTriangle className="w-5 h-5" />} alert={myPending > 0} tooltip="Assigned but not yet progressed" />
+      </div>
+
+      {/* Priority KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <KPICard title="🔴 Red Leads" value={redCount} icon={<Flame className="w-5 h-5" />} href="/leads?priority=red" alert={redCount > 0} tooltip="Needs immediate attention" />
+        <KPICard title="🟠 Amber Leads" value={amberCount} icon={<AlertTriangle className="w-5 h-5" />} href="/leads?priority=amber" tooltip="Follow-up needed" />
+        <KPICard title="🟢 Green Leads" value={greenCount} icon={<CheckCircle2 className="w-5 h-5" />} href="/leads?priority=green" tooltip="Low urgency" />
       </div>
 
       <StatusMiniCards leads={leads} />
