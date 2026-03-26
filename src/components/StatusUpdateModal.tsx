@@ -35,7 +35,7 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
     if (!status) errs.status = 'Status is required';
     if (!messageType) errs.messageType = 'Message type must be selected';
     if (!connectNote.trim()) errs.connectNote = 'Connect note is required';
-    if (needsPriority && !priority) errs.priority = 'Priority is required for Request Accepted';
+    if (needsPriority && !priority) errs.priority = 'Priority color is mandatory for this status';
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
