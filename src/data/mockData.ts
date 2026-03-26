@@ -74,7 +74,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_a: 'Hi Zoe, I was inspired by what Joyvie Health is doing for women\'s wellness. We help digital health companies scale outreach efficiently - would love to connect and share insights.',
     message_b: 'Hello Zoe, Joyvie Health\'s approach to personalised hormonal health is truly innovative! We have helped similar healthtech startups grow 3x faster. Open to a quick chat?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
