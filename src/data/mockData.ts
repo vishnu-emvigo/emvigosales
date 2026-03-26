@@ -87,7 +87,7 @@ export const INITIAL_LEADS: Lead[] = [
     person_summary: 'Oliver Harrison is a senior executive at Koa Health with a strong background in digital health, mental wellness, and enterprise SaaS solutions.',
     message_a: 'Hi Oliver, Koa Health\'s work in digital mental health is really impressive. We help healthtech companies like yours expand B2B outreach - let us connect and explore synergies.',
     message_b: 'Hello Oliver, the impact Koa Health is making in workplace mental health is remarkable! We have helped similar companies build strong sales pipelines. Interested in a brief chat?',
-    status: 'not_assigned', assigned_to: null, selected_message: null,
+    status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null, selected_message: null,
     linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
