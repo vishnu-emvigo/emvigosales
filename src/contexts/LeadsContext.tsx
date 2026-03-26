@@ -172,6 +172,7 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         ...l,
         status,
         selected_message: messageType,
+        last_action_at: new Date().toISOString(),
         ...(priority ? { priority_color: priority } : {}),
       } : l
     ));
