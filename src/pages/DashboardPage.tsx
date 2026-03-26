@@ -8,7 +8,7 @@ import RepPerformanceTable from '@/components/dashboard/RepPerformanceTable';
 import RemindersPanel from '@/components/dashboard/RemindersPanel';
 import InactivityAlerts from '@/components/dashboard/InactivityAlerts';
 import CommentsActivity from '@/components/dashboard/CommentsActivity';
-import PriorityDistribution from '@/components/dashboard/PriorityDistribution';
+
 import HighPriorityAlerts from '@/components/dashboard/HighPriorityAlerts';
 import { Users, UserX, Activity, CheckCircle2, TrendingUp, Upload, ClipboardList, AlertTriangle, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
