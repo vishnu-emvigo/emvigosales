@@ -19,7 +19,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_b: 'Hello Rachel, exciting things happening at Stealth AI Startup! We have helped similar early-stage AI companies achieve 3x pipeline growth. Open to a quick chat?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
     linkedin_profile_used: null, response_notes: null, reminders: [],
-    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
     id: 'lead-2', sr_no: 2,
@@ -33,7 +33,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_b: 'Hello Ali, impressive traction with MediShout across NHS trusts! We have helped similar healthtech companies accelerate growth. Interested in a brief conversation?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
     linkedin_profile_used: null, response_notes: null, reminders: [],
-    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
     id: 'lead-3', sr_no: 3,
@@ -47,7 +47,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_b: 'Hello Ioannis, Deontics is doing groundbreaking work in personalised care. We have helped similar companies achieve 2x outreach efficiency. Fancy a quick call?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
     linkedin_profile_used: null, response_notes: null, reminders: [],
-    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
     id: 'lead-4', sr_no: 4,
@@ -61,7 +61,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_b: 'Hello Jonathan, exciting developments at AROai! We have helped similar proptech companies build robust sales pipelines. Would you be open to a brief chat?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
     linkedin_profile_used: null, response_notes: null, reminders: [],
-    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
     id: 'lead-5', sr_no: 5,
@@ -75,7 +75,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_b: 'Hello Zoe, Joyvie Health\'s approach to personalised hormonal health is truly innovative! We have helped similar healthtech startups grow 3x faster. Open to a quick chat?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
     linkedin_profile_used: null, response_notes: null, reminders: [],
-    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
     id: 'lead-6', sr_no: 6,
@@ -89,7 +89,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_b: 'Hello Oliver, the impact Koa Health is making in workplace mental health is remarkable! We have helped similar companies build strong sales pipelines. Interested in a brief chat?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
     linkedin_profile_used: null, response_notes: null, reminders: [],
-    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
 ];
 
