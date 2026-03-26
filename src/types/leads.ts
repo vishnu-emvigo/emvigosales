@@ -1,4 +1,4 @@
-export type LeadStatus = 'not_assigned' | 'assigned' | 'mail_sent' | 'connection_sent' | 'request_accepted' | 'response_back';
+export type LeadStatus = 'not_assigned' | 'assigned' | 'mail_sent' | 'connection_sent' | 'request_accepted' | 'response_back' | 'meeting' | 'converted_to_customer';
 
 export type PriorityColor = 'red' | 'amber' | 'green' | 'none';
 
