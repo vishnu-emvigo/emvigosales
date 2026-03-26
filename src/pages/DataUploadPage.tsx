@@ -53,6 +53,7 @@ const DataUploadPage = () => {
             linkedin_profile_used: null,
             response_notes: null,
             reminders: [],
+            connect_notes: [],
             batch_id: batchId,
             upload_date: today,
             priority_color: 'none' as const,
