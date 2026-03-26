@@ -9,13 +9,15 @@ const STAGE_COLORS: Record<LeadStatus, string> = {
   connection_sent: 'border-orange-300 bg-orange-50',
   request_accepted: 'border-emerald-300 bg-emerald-50',
   response_back: 'border-green-400 bg-green-50',
+  meeting: 'border-purple-300 bg-purple-50',
+  converted_to_customer: 'border-teal-300 bg-teal-50',
 };
 
 interface Props { leads: Lead[] }
 
 const StatusMiniCards = ({ leads }: Props) => {
   const navigate = useNavigate();
-  const statuses: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back'];
+  const statuses: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back', 'meeting', 'converted_to_customer'];
 
   return (
     <div className="bg-card rounded-xl border border-border p-5 shadow-card">

@@ -25,7 +25,7 @@ const DashboardPage = () => {
   const unassigned = leads.filter(l => l.status === 'not_assigned').length;
   const activeStatuses: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent'];
   const activeLeads = leads.filter(l => activeStatuses.includes(l.status)).length;
-  const converted = leads.filter(l => l.status === 'response_back').length;
+  const converted = leads.filter(l => l.status === 'converted_to_customer').length;
   const assignedTotal = leads.filter(l => l.status !== 'not_assigned').length;
   const conversionRate = assignedTotal > 0 ? Math.round((converted / assignedTotal) * 100) : 0;
 
@@ -40,10 +40,10 @@ const DashboardPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <KPICard title="My Leads" value={myLeads.length} icon={<Users className="w-5 h-5" />} href="/my-leads" />
           <KPICard title="Pending" value={myPending} icon={<Activity className="w-5 h-5" />} alert={myPending > 0} />
-          <KPICard title="Completed" value={myLeads.filter(l => l.status === 'response_back').length} icon={<CheckCircle2 className="w-5 h-5" />} />
+          <KPICard title="Completed" value={myLeads.filter(l => l.status === 'converted_to_customer').length} icon={<CheckCircle2 className="w-5 h-5" />} />
           <KPICard
             title="My Conversion"
-            value={myLeads.length > 0 ? `${Math.round((myLeads.filter(l => l.status === 'response_back').length / myLeads.length) * 100)}%` : '0%'}
+            value={myLeads.length > 0 ? `${Math.round((myLeads.filter(l => l.status === 'converted_to_customer').length / myLeads.length) * 100)}%` : '0%'}
             icon={<TrendingUp className="w-5 h-5" />}
           />
         </div>

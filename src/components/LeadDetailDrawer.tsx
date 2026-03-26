@@ -19,7 +19,7 @@ interface LeadDetailDrawerProps {
   onClose: () => void;
 }
 
-const STATUS_FLOW: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back'];
+const STATUS_FLOW: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back', 'meeting', 'converted_to_customer'];
 
 const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
   const { updateLead, addComment, comments, addReminder, removeReminder, setPriority } = useLeads();
