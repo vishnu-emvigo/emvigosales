@@ -1,12 +1,15 @@
 import { useState, useMemo } from 'react';
-import { Lead, LeadStatus, STATUS_LABELS } from '@/types/leads';
+import { Lead, LeadStatus, STATUS_LABELS, PriorityColor, canModifyLead } from '@/types/leads';
 import StatusBadge from '@/components/StatusBadge';
+import PriorityDot from '@/components/PriorityDot';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLeads } from '@/contexts/LeadsContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LeadsTableProps {
   leads: Lead[];
@@ -22,12 +25,22 @@ interface LeadsTableProps {
 const truncate = (text: string, max = 80) =>
   text.length > max ? text.slice(0, max) + '…' : text;
 
+const ROW_PRIORITY_BG: Record<PriorityColor, string> = {
+  red: 'bg-destructive/5',
+  amber: 'bg-amber-50',
+  green: 'bg-emerald-50',
+  none: '',
+};
+
 const LeadsTable = ({
   leads, onLeadClick, selectable = false, selectedIds = [], onSelectionChange, pageSize = 20, actions, showMessages = false,
 }: LeadsTableProps) => {
+  const { setPriority } = useLeads();
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [assignedFilter, setAssignedFilter] = useState<string>('all');
+  const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
 
   const assignedUsers = useMemo(() => {
@@ -43,8 +56,12 @@ const LeadsTable = ({
     }
     if (statusFilter !== 'all') result = result.filter(l => l.status === statusFilter);
     if (assignedFilter !== 'all') result = result.filter(l => l.assigned_to === assignedFilter);
+    if (priorityFilter !== 'all') result = result.filter(l => l.priority_color === priorityFilter);
+    // Sort: red first, amber, green, none
+    const priorityOrder: Record<PriorityColor, number> = { red: 0, amber: 1, green: 2, none: 3 };
+    result = [...result].sort((a, b) => priorityOrder[a.priority_color] - priorityOrder[b.priority_color]);
     return result;
-  }, [leads, search, statusFilter, assignedFilter]);
+  }, [leads, search, statusFilter, assignedFilter, priorityFilter]);
 
   const totalPages = Math.ceil(filtered.length / pageSize);
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -74,6 +91,16 @@ const LeadsTable = ({
             {Object.entries(STATUS_LABELS).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
           </SelectContent>
         </Select>
+        <Select value={priorityFilter} onValueChange={v => { setPriorityFilter(v); setPage(1); }}>
+          <SelectTrigger className="w-[130px] h-8 text-xs"><SelectValue placeholder="Priority" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Priorities</SelectItem>
+            <SelectItem value="red">🔴 High</SelectItem>
+            <SelectItem value="amber">🟠 Medium</SelectItem>
+            <SelectItem value="green">🟢 Low</SelectItem>
+            <SelectItem value="none">No Priority</SelectItem>
+          </SelectContent>
+        </Select>
         {assignedUsers.length > 0 && (
           <Select value={assignedFilter} onValueChange={v => { setAssignedFilter(v); setPage(1); }}>
             <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue placeholder="Assigned To" /></SelectTrigger>
@@ -95,6 +122,7 @@ const LeadsTable = ({
                 {selectable && (
                   <th className="w-8 px-2 py-2"><Checkbox checked={allSelected} onCheckedChange={toggleAll} /></th>
                 )}
+                <th className="px-2 py-2 text-left font-medium text-muted-foreground w-10">P</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground w-10">#</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Full Name</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Company</th>
@@ -111,52 +139,62 @@ const LeadsTable = ({
               </tr>
             </thead>
             <tbody>
-              {paginated.map(lead => (
-                <tr
-                  key={lead.id}
-                  onClick={() => onLeadClick(lead)}
-                  className="border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer transition-colors"
-                >
-                  {selectable && (
+              {paginated.map(lead => {
+                const canSetPriority = canModifyLead(user?.name, lead);
+                return (
+                  <tr
+                    key={lead.id}
+                    onClick={() => onLeadClick(lead)}
+                    className={`border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer transition-colors ${ROW_PRIORITY_BG[lead.priority_color]}`}
+                  >
+                    {selectable && (
+                      <td className="px-2 py-1.5" onClick={e => e.stopPropagation()}>
+                        <Checkbox checked={selectedIds.includes(lead.id)} onCheckedChange={() => toggleOne(lead.id)} />
+                      </td>
+                    )}
                     <td className="px-2 py-1.5" onClick={e => e.stopPropagation()}>
-                      <Checkbox checked={selectedIds.includes(lead.id)} onCheckedChange={() => toggleOne(lead.id)} />
+                      <PriorityDot
+                        priority={lead.priority_color}
+                        interactive={canSetPriority}
+                        onSelect={canSetPriority ? (p) => setPriority(lead.id, p, user?.name || '') : undefined}
+                      />
                     </td>
-                  )}
-                  <td className="px-3 py-1.5 text-muted-foreground">{lead.sr_no}</td>
-                  <td className="px-3 py-1.5 font-medium text-foreground">{lead.full_name}</td>
-                  <td className="px-3 py-1.5 text-foreground">{lead.company}</td>
-                  <td className="px-3 py-1.5 text-muted-foreground">{lead.location}</td>
-                  <td className="px-3 py-1.5"><StatusBadge status={lead.status} /></td>
-                  <td className="px-3 py-1.5 text-muted-foreground">{lead.assigned_to || '—'}</td>
-                  {showMessages && (
-                    <>
-                      <td className="px-3 py-1.5 text-muted-foreground max-w-[200px]">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="block truncate cursor-default">{truncate(lead.message_a)}</span>
-                          </TooltipTrigger>
-                          <TooltipContent side="bottom" className="max-w-sm text-xs whitespace-pre-wrap">
-                            {lead.message_a}
-                          </TooltipContent>
-                        </Tooltip>
-                      </td>
-                      <td className="px-3 py-1.5 text-muted-foreground max-w-[200px]">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="block truncate cursor-default">{truncate(lead.message_b)}</span>
-                          </TooltipTrigger>
-                          <TooltipContent side="bottom" className="max-w-sm text-xs whitespace-pre-wrap">
-                            {lead.message_b}
-                          </TooltipContent>
-                        </Tooltip>
-                      </td>
-                    </>
-                  )}
-                  <td className="px-3 py-1.5 text-muted-foreground">{lead.selected_message || '—'}</td>
-                </tr>
-              ))}
+                    <td className="px-3 py-1.5 text-muted-foreground">{lead.sr_no}</td>
+                    <td className="px-3 py-1.5 font-medium text-foreground">{lead.full_name}</td>
+                    <td className="px-3 py-1.5 text-foreground">{lead.company}</td>
+                    <td className="px-3 py-1.5 text-muted-foreground">{lead.location}</td>
+                    <td className="px-3 py-1.5"><StatusBadge status={lead.status} /></td>
+                    <td className="px-3 py-1.5 text-muted-foreground">{lead.assigned_to || '—'}</td>
+                    {showMessages && (
+                      <>
+                        <td className="px-3 py-1.5 text-muted-foreground max-w-[200px]">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="block truncate cursor-default">{truncate(lead.message_a)}</span>
+                            </TooltipTrigger>
+                            <TooltipContent side="bottom" className="max-w-sm text-xs whitespace-pre-wrap">
+                              {lead.message_a}
+                            </TooltipContent>
+                          </Tooltip>
+                        </td>
+                        <td className="px-3 py-1.5 text-muted-foreground max-w-[200px]">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="block truncate cursor-default">{truncate(lead.message_b)}</span>
+                            </TooltipTrigger>
+                            <TooltipContent side="bottom" className="max-w-sm text-xs whitespace-pre-wrap">
+                              {lead.message_b}
+                            </TooltipContent>
+                          </Tooltip>
+                        </td>
+                      </>
+                    )}
+                    <td className="px-3 py-1.5 text-muted-foreground">{lead.selected_message || '—'}</td>
+                  </tr>
+                );
+              })}
               {paginated.length === 0 && (
-                <tr><td colSpan={selectable ? 9 : 8} className="px-3 py-10 text-center text-muted-foreground">No leads found</td></tr>
+                <tr><td colSpan={selectable ? 10 : 9} className="px-3 py-10 text-center text-muted-foreground">No leads found</td></tr>
               )}
             </tbody>
           </table>
