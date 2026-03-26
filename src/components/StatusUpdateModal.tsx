@@ -128,17 +128,17 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
             </div>
           )}
 
-          {/* Comment */}
+          {/* Connect Note */}
           <div className="space-y-1.5">
-            <Label className="text-sm font-medium">Comment *</Label>
+            <Label className="text-sm font-medium">Connect Note *</Label>
             <Textarea
-              placeholder="Add a comment about this status change..."
-              value={comment}
-              onChange={e => { setComment(e.target.value); setErrors(er => ({ ...er, comment: '' })); }}
+              placeholder="Add a note about this status change..."
+              value={connectNote}
+              onChange={e => { setConnectNote(e.target.value); setErrors(er => ({ ...er, connectNote: '' })); }}
               rows={3}
               className="text-sm"
             />
-            {errors.comment && <p className="text-xs text-destructive">{errors.comment}</p>}
+            {errors.connectNote && <p className="text-xs text-destructive">{errors.connectNote}</p>}
           </div>
         </div>
         <DialogFooter>
