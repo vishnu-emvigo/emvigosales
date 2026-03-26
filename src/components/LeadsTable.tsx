@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Lead, LeadStatus, STATUS_LABELS, PriorityColor, PRIORITY_LABELS, canModifyLead } from '@/types/leads';
+import { Lead, LeadStatus, STATUS_LABELS, PriorityColor, canModifyLead } from '@/types/leads';
 import StatusBadge from '@/components/StatusBadge';
 import PriorityDot from '@/components/PriorityDot';
 import { Input } from '@/components/ui/input';
@@ -64,7 +64,6 @@ const LeadsTable = ({
     if (statusFilter !== 'all') result = result.filter(l => l.status === statusFilter);
     if (assignedFilter !== 'all') result = result.filter(l => l.assigned_to === assignedFilter);
     if (priorityFilter !== 'all') result = result.filter(l => l.priority_color === priorityFilter);
-    // Sort: red first, amber, green, none
     const priorityOrder: Record<PriorityColor, number> = { red: 0, amber: 1, green: 2, none: 3 };
     result = [...result].sort((a, b) => priorityOrder[a.priority_color] - priorityOrder[b.priority_color]);
     return result;
@@ -142,13 +141,15 @@ const LeadsTable = ({
                     <th className="px-3 py-2 text-left font-medium text-muted-foreground">Msg B</th>
                   </>
                 )}
-                <th className="px-3 py-2 text-left font-medium text-muted-foreground w-12">Msg</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap">Inmail Message Type Sent</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap">Connect Note Type</th>
               </tr>
             </thead>
             <tbody>
               {paginated.map(lead => {
                 const canSetPriority = canModifyLead(user?.name, lead);
                 const pd = PRIORITY_DISPLAY[lead.priority_color];
+                const latestNote = lead.connect_notes.length > 0 ? lead.connect_notes[lead.connect_notes.length - 1] : null;
                 return (
                   <tr
                     key={lead.id}
@@ -205,11 +206,23 @@ const LeadsTable = ({
                       </>
                     )}
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.selected_message || '—'}</td>
+                    <td className="px-3 py-1.5 text-muted-foreground max-w-[150px]">
+                      {latestNote ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="block truncate cursor-default">{truncate(latestNote.content, 40)}</span>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" className="max-w-sm text-xs whitespace-pre-wrap">
+                            {latestNote.content}
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : '—'}
+                    </td>
                   </tr>
                 );
               })}
               {paginated.length === 0 && (
-                <tr><td colSpan={selectable ? 10 : 9} className="px-3 py-10 text-center text-muted-foreground">No leads found</td></tr>
+                <tr><td colSpan={selectable ? 12 : 11} className="px-3 py-10 text-center text-muted-foreground">No leads found</td></tr>
               )}
             </tbody>
           </table>

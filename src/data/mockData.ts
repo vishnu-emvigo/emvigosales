@@ -18,7 +18,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_a: 'Hi Rachel, I came across your work at Stealth AI Startup and was impressed by the innovation in enterprise automation. We help AI-focused companies scale their outreach - would love to connect and share ideas.',
     message_b: 'Hello Rachel, exciting things happening at Stealth AI Startup! We have helped similar early-stage AI companies achieve 3x pipeline growth. Open to a quick chat?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -32,7 +32,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_a: 'Hi Ali, your work at MediShout in healthcare operations is truly impactful. We specialise in helping healthtech companies expand their B2B outreach - let us connect.',
     message_b: 'Hello Ali, impressive traction with MediShout across NHS trusts! We have helped similar healthtech companies accelerate growth. Interested in a brief conversation?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -46,7 +46,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_a: 'Hi Ioannis, I noticed your work at Deontics in clinical decision support - fascinating space. We help health-AI companies like yours build strong sales pipelines. Would love to connect.',
     message_b: 'Hello Ioannis, Deontics is doing groundbreaking work in personalised care. We have helped similar companies achieve 2x outreach efficiency. Fancy a quick call?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -60,7 +60,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_a: 'Hi Jonathan, your work at AROai combining AI with property analytics is really compelling. We help proptech companies like yours accelerate B2B growth - let us connect.',
     message_b: 'Hello Jonathan, exciting developments at AROai! We have helped similar proptech companies build robust sales pipelines. Would you be open to a brief chat?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -74,7 +74,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_a: 'Hi Zoe, I was inspired by what Joyvie Health is doing for women\'s wellness. We help digital health companies scale outreach efficiently - would love to connect and share insights.',
     message_b: 'Hello Zoe, Joyvie Health\'s approach to personalised hormonal health is truly innovative! We have helped similar healthtech startups grow 3x faster. Open to a quick chat?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -88,7 +88,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_a: 'Hi Oliver, Koa Health\'s work in digital mental health is really impressive. We help healthtech companies like yours expand B2B outreach - let us connect and explore synergies.',
     message_b: 'Hello Oliver, the impact Koa Health is making in workplace mental health is remarkable! We have helped similar companies build strong sales pipelines. Interested in a brief chat?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
 ];
