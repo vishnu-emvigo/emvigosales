@@ -1,5 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { MOCK_LEADS, MOCK_REPS } from '@/data/mockData';
+import { useLeads } from '@/contexts/LeadsContext';
 import StatCard from '@/components/StatCard';
 import StatusBadge from '@/components/StatusBadge';
 import { LeadStatus, STATUS_LABELS } from '@/types/leads';
@@ -8,12 +8,13 @@ import { motion } from 'framer-motion';
 
 const DashboardPage = () => {
   const { user } = useAuth();
+  const { leads, reps } = useLeads();
   const isRep = user?.role === 'sales_rep';
 
-  const myLeads = isRep ? MOCK_LEADS.filter(l => l.assigned_to === user?.name) : MOCK_LEADS;
+  const myLeads = isRep ? leads.filter(l => l.assigned_to === user?.name) : leads;
   const today = new Date().toISOString().split('T')[0];
-  const uploadedToday = MOCK_LEADS.filter(l => l.upload_date === today).length;
-  const unassigned = MOCK_LEADS.filter(l => l.status === 'not_assigned').length;
+  const uploadedToday = leads.filter(l => l.upload_date === today).length;
+  const unassigned = leads.filter(l => l.status === 'not_assigned').length;
   const remindersToday = myLeads.filter(l => l.reminder_date === today).length;
 
   const statusCounts = myLeads.reduce((acc, l) => {
@@ -36,7 +37,6 @@ const DashboardPage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Status Breakdown */}
         <div className="bg-card rounded-xl border border-border p-5 shadow-card">
           <h2 className="text-sm font-semibold text-foreground mb-4">Status Breakdown</h2>
           <div className="space-y-3">
@@ -56,13 +56,12 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Rep Performance (admin/sales_admin only) */}
         {!isRep && (
           <div className="bg-card rounded-xl border border-border p-5 shadow-card">
             <h2 className="text-sm font-semibold text-foreground mb-4">Sales Rep Performance</h2>
             <div className="space-y-3">
-              {MOCK_REPS.map(rep => {
-                const repLeads = MOCK_LEADS.filter(l => l.assigned_to === rep.name);
+              {reps.map(rep => {
+                const repLeads = leads.filter(l => l.assigned_to === rep.name);
                 const completed = repLeads.filter(l => l.status === 'response_back').length;
                 return (
                   <div key={rep.id} className="flex items-center gap-3">
@@ -71,7 +70,7 @@ const DashboardPage = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground truncate">{rep.name}</p>
-                      <p className="text-xs text-muted-foreground">{repLeads.length} leads • {completed} completed</p>
+                      <p className="text-xs text-muted-foreground">{repLeads.length} leads - {completed} completed</p>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${rep.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
                       {rep.status === 'active' ? 'Active' : 'On Leave'}

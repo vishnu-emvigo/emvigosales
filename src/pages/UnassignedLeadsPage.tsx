@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MOCK_LEADS, MOCK_REPS } from '@/data/mockData';
+import { useLeads } from '@/contexts/LeadsContext';
 import LeadsTable from '@/components/LeadsTable';
 import LeadDetailDrawer from '@/components/LeadDetailDrawer';
 import { Lead } from '@/types/leads';
@@ -11,22 +11,29 @@ import { motion } from 'framer-motion';
 
 const UnassignedLeadsPage = () => {
   const { user } = useAuth();
+  const { leads, reps, assignLeads } = useLeads();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [assignTo, setAssignTo] = useState('');
 
-  const unassigned = MOCK_LEADS.filter(l => l.status === 'not_assigned');
+  const unassigned = leads.filter(l => l.status === 'not_assigned');
   const isRep = user?.role === 'sales_rep';
+  const activeReps = reps.filter(r => r.status === 'active');
+  const currentLead = selectedLead ? leads.find(l => l.id === selectedLead.id) || null : null;
 
   const handleAssign = () => {
     if (selectedIds.length === 0) return toast.error('Select leads first');
     if (isRep) {
+      assignLeads(selectedIds, user!.name, 'https://linkedin.com/in/sales-rep');
       toast.success(`${selectedIds.length} leads assigned to you`);
     } else {
       if (!assignTo) return toast.error('Select a sales rep');
+      const rep = activeReps.find(r => r.name === assignTo);
+      assignLeads(selectedIds, assignTo, rep?.linkedin_profile || '');
       toast.success(`${selectedIds.length} leads assigned to ${assignTo}`);
     }
     setSelectedIds([]);
+    setAssignTo('');
   };
 
   return (
@@ -44,7 +51,7 @@ const UnassignedLeadsPage = () => {
               <Select value={assignTo} onValueChange={setAssignTo}>
                 <SelectTrigger className="w-[160px] h-9"><SelectValue placeholder="Assign to..." /></SelectTrigger>
                 <SelectContent>
-                  {MOCK_REPS.filter(r => r.status === 'active').map(r => (
+                  {activeReps.map(r => (
                     <SelectItem key={r.id} value={r.name}>{r.name}</SelectItem>
                   ))}
                 </SelectContent>
@@ -56,7 +63,7 @@ const UnassignedLeadsPage = () => {
           </div>
         }
       />
-      <LeadDetailDrawer lead={selectedLead} open={!!selectedLead} onClose={() => setSelectedLead(null)} />
+      <LeadDetailDrawer lead={currentLead} open={!!currentLead} onClose={() => setSelectedLead(null)} />
     </motion.div>
   );
 };
