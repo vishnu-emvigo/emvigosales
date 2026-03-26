@@ -220,10 +220,10 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
             <Separator />
 
-            {/* Connect Notes — Timeline Log */}
+            {/* Connect Note — One-time only */}
             <section className="space-y-2">
               <h3 className="text-sm font-semibold text-foreground">
-                Connect Notes {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
+                Connect Note {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
               </h3>
               {lead.connect_notes.length > 0 ? (
                 <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -235,15 +235,22 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
                       <p className="text-sm text-foreground mt-0.5">"{note.content}"</p>
                     </div>
                   ))}
+                  {isAssigned && (
+                    <p className="text-xs text-muted-foreground italic flex items-center gap-1">
+                      <Lock className="w-3 h-3" /> Connect Note has been submitted and is locked
+                    </p>
+                  )}
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">No notes yet</p>
-              )}
-              {isAssigned && (
-                <div className="flex gap-2">
-                  <Textarea placeholder="Add a connect note..." value={connectNote} onChange={e => setConnectNote(e.target.value)} rows={2} className="text-sm" />
-                  <Button size="sm" className="h-auto self-end" onClick={handleAddConnectNote}>Add</Button>
-                </div>
+                <>
+                  <p className="text-xs text-muted-foreground">No connect note yet</p>
+                  {isAssigned && (
+                    <div className="flex gap-2">
+                      <Textarea placeholder="Add your connect note (one-time only)..." value={connectNote} onChange={e => setConnectNote(e.target.value)} rows={2} className="text-sm" />
+                      <Button size="sm" className="h-auto self-end" onClick={handleAddConnectNote}>Submit</Button>
+                    </div>
+                  )}
+                </>
               )}
             </section>
 
