@@ -1,118 +1,116 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useLeads } from '@/contexts/LeadsContext';
-import StatCard from '@/components/StatCard';
-import StatusBadge from '@/components/StatusBadge';
-import { LeadStatus, STATUS_LABELS } from '@/types/leads';
-import { Users, Upload, UserCheck, BarChart3, Bell } from 'lucide-react';
+import { LeadStatus } from '@/types/leads';
+import KPICard from '@/components/dashboard/KPICard';
+import StatusFunnel from '@/components/dashboard/StatusFunnel';
+import StatusMiniCards from '@/components/dashboard/StatusMiniCards';
+import RepPerformanceTable from '@/components/dashboard/RepPerformanceTable';
+import RemindersPanel from '@/components/dashboard/RemindersPanel';
+import InactivityAlerts from '@/components/dashboard/InactivityAlerts';
+import CommentsActivity from '@/components/dashboard/CommentsActivity';
+import { Users, UserX, Activity, CheckCircle2, TrendingUp, Upload, ClipboardList, AlertTriangle, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const DashboardPage = () => {
   const { user } = useAuth();
-  const { leads, reps } = useLeads();
-  const isRep = user?.role === 'sales_rep';
+  const { leads, reps, comments } = useLeads();
 
-  const myLeads = isRep ? leads.filter(l => l.assigned_to === user?.name) : leads;
+  const isRep = user?.role === 'sales_rep';
+  const isAdmin = user?.role === 'admin';
+  const isSalesAdmin = user?.role === 'sales_admin';
+
   const today = new Date().toISOString().split('T')[0];
   const uploadedToday = leads.filter(l => l.upload_date === today).length;
   const unassigned = leads.filter(l => l.status === 'not_assigned').length;
+  const activeStatuses: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent'];
+  const activeLeads = leads.filter(l => activeStatuses.includes(l.status)).length;
+  const converted = leads.filter(l => l.status === 'response_back').length;
+  const assignedTotal = leads.filter(l => l.status !== 'not_assigned').length;
+  const conversionRate = assignedTotal > 0 ? Math.round((converted / assignedTotal) * 100) : 0;
 
-  // Count leads with reminders due today
-  const remindersToday = myLeads.filter(l =>
-    l.reminders.some(r => r.datetime.startsWith(today))
-  ).length;
+  const myLeads = leads.filter(l => l.assigned_to === user?.name);
+  const myPending = myLeads.filter(l => l.status === 'assigned').length;
 
-  const statusCounts = myLeads.reduce((acc, l) => {
-    acc[l.status] = (acc[l.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  // ─── SALES REP DASHBOARD ─────────────────────────
+  if (isRep) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+        <h1 className="text-xl font-semibold text-foreground">My Dashboard</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <KPICard title="My Leads" value={myLeads.length} icon={<Users className="w-5 h-5" />} href="/my-leads" />
+          <KPICard title="Pending" value={myPending} icon={<Activity className="w-5 h-5" />} alert={myPending > 0} />
+          <KPICard title="Completed" value={myLeads.filter(l => l.status === 'response_back').length} icon={<CheckCircle2 className="w-5 h-5" />} />
+          <KPICard
+            title="My Conversion"
+            value={myLeads.length > 0 ? `${Math.round((myLeads.filter(l => l.status === 'response_back').length / myLeads.length) * 100)}%` : '0%'}
+            icon={<TrendingUp className="w-5 h-5" />}
+          />
+        </div>
+        <StatusMiniCards leads={myLeads} />
+        <RemindersPanel leads={myLeads} userName={user?.name} />
+      </motion.div>
+    );
+  }
 
-  // Today's follow-ups
-  const todayFollowUps = myLeads.filter(l =>
-    l.reminders.some(r => r.datetime.startsWith(today))
-  );
+  // ─── ADMIN DASHBOARD (STRATEGIC) ──────────────────
+  if (isAdmin) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+        <h1 className="text-xl font-semibold text-foreground">Admin Dashboard</h1>
 
+        {/* Section 1: Global KPIs */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <KPICard title="Total Leads" value={leads.length} subtitle={`+${uploadedToday} today`} icon={<Users className="w-5 h-5" />} href="/leads" tooltip="Click to view all leads" />
+          <KPICard title="Unassigned" value={unassigned} icon={<UserX className="w-5 h-5" />} href="/unassigned" alert={unassigned > 3} tooltip="Leads needing assignment" />
+          <KPICard title="Active" value={activeLeads} icon={<Activity className="w-5 h-5" />} tooltip="Assigned, mail sent, or connection sent" />
+          <KPICard title="Converted" value={converted} icon={<CheckCircle2 className="w-5 h-5" />} />
+          <KPICard title="Conversion Rate" value={`${conversionRate}%`} icon={<TrendingUp className="w-5 h-5" />} tooltip="Response back / total assigned" />
+        </div>
+
+        {/* Section 2 + 3: Funnel + Rep Performance */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <StatusFunnel leads={leads} />
+          <RepPerformanceTable leads={leads} reps={reps} />
+        </div>
+
+        {/* Section 4 + 5: Reminders + Inactivity */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <RemindersPanel leads={leads} />
+          <InactivityAlerts leads={leads} />
+        </div>
+
+        {/* Section 6: Comments */}
+        <CommentsActivity comments={comments} leads={leads} />
+      </motion.div>
+    );
+  }
+
+  // ─── SALES ADMIN DASHBOARD (OPERATIONAL) ──────────
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <h1 className="text-xl font-semibold text-foreground">
-        {isRep ? 'My Dashboard' : 'Dashboard'}
-      </h1>
+      <h1 className="text-xl font-semibold text-foreground">Sales Admin Dashboard</h1>
 
+      {/* Section 1: Quick Action Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title={isRep ? 'My Leads' : 'Total Leads'} value={myLeads.length} icon={<Users className="w-5 h-5" />} />
-        {!isRep && <StatCard title="Uploaded Today" value={uploadedToday} icon={<Upload className="w-5 h-5" />} />}
-        <StatCard title="Unassigned" value={unassigned} icon={<UserCheck className="w-5 h-5" />} />
-        <StatCard title="Reminders Today" value={remindersToday} icon={<Bell className="w-5 h-5" />} />
-        {isRep && <StatCard title="Completed" value={statusCounts['response_back'] || 0} icon={<BarChart3 className="w-5 h-5" />} />}
+        <KPICard title="Unassigned Leads" value={unassigned} icon={<UserX className="w-5 h-5" />} href="/unassigned" alert={unassigned > 0} tooltip="Assign to reps or yourself" />
+        <KPICard title="Assigned to Me" value={myLeads.length} icon={<ClipboardList className="w-5 h-5" />} href="/my-leads" tooltip="Leads you're working on" />
+        <KPICard title="Uploaded Today" value={uploadedToday} icon={<Upload className="w-5 h-5" />} />
+        <KPICard title="Pending Actions" value={myPending} icon={<AlertTriangle className="w-5 h-5" />} alert={myPending > 0} tooltip="Assigned but not yet progressed" />
       </div>
 
-      {/* Today's Follow-ups */}
-      {todayFollowUps.length > 0 && (
-        <div className="bg-card rounded-xl border border-border p-5 shadow-card">
-          <h2 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Bell className="w-4 h-4 text-primary" /> Today's Follow-ups
-          </h2>
-          <div className="space-y-2">
-            {todayFollowUps.map(lead => (
-              <div key={lead.id} className="flex items-center gap-3 py-2 px-3 rounded-lg bg-muted/30 text-sm">
-                <span className="font-medium text-foreground">{lead.full_name}</span>
-                <span className="text-muted-foreground">{lead.company}</span>
-                <StatusBadge status={lead.status} />
-                <span className="ml-auto text-xs text-muted-foreground">
-                  {lead.reminders.filter(r => r.datetime.startsWith(today)).map(r =>
-                    new Date(r.datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                  ).join(', ')}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Section 2: Status Overview */}
+      <StatusMiniCards leads={leads} />
 
+      {/* Section 3 + 4: Team Performance + Reminders */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-card rounded-xl border border-border p-5 shadow-card">
-          <h2 className="text-sm font-semibold text-foreground mb-4">Status Breakdown</h2>
-          <div className="space-y-3">
-            {(Object.keys(STATUS_LABELS) as LeadStatus[]).map(status => {
-              const count = statusCounts[status] || 0;
-              const pct = myLeads.length ? Math.round((count / myLeads.length) * 100) : 0;
-              return (
-                <div key={status} className="flex items-center gap-3">
-                  <StatusBadge status={status} className="w-32 justify-center" />
-                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-primary/60 rounded-full transition-all" style={{ width: `${pct}%` }} />
-                  </div>
-                  <span className="text-xs text-muted-foreground w-12 text-right">{count} ({pct}%)</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <RepPerformanceTable leads={leads} reps={reps} compact />
+        <RemindersPanel leads={leads} userName={user?.name} />
+      </div>
 
-        {!isRep && (
-          <div className="bg-card rounded-xl border border-border p-5 shadow-card">
-            <h2 className="text-sm font-semibold text-foreground mb-4">Sales Rep Performance</h2>
-            <div className="space-y-3">
-              {reps.map(rep => {
-                const repLeads = leads.filter(l => l.assigned_to === rep.name);
-                const completed = repLeads.filter(l => l.status === 'response_back').length;
-                return (
-                  <div key={rep.id} className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-xs font-medium text-primary">{rep.name.charAt(0)}</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{rep.name}</p>
-                      <p className="text-xs text-muted-foreground">{repLeads.length} leads - {completed} completed</p>
-                    </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${rep.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
-                      {rep.status === 'active' ? 'Active' : 'On Leave'}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+      {/* Section 5 + 6: Inactivity + Comments */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <InactivityAlerts leads={leads} />
+        <CommentsActivity comments={comments} leads={leads} />
       </div>
     </motion.div>
   );
