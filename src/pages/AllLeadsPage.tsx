@@ -1,0 +1,20 @@
+import { useState } from 'react';
+import { MOCK_LEADS } from '@/data/mockData';
+import LeadsTable from '@/components/LeadsTable';
+import LeadDetailDrawer from '@/components/LeadDetailDrawer';
+import { Lead } from '@/types/leads';
+import { motion } from 'framer-motion';
+
+const AllLeadsPage = () => {
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+      <h1 className="text-xl font-semibold text-foreground">All Leads</h1>
+      <LeadsTable leads={MOCK_LEADS} onLeadClick={setSelectedLead} />
+      <LeadDetailDrawer lead={selectedLead} open={!!selectedLead} onClose={() => setSelectedLead(null)} />
+    </motion.div>
+  );
+};
+
+export default AllLeadsPage;
