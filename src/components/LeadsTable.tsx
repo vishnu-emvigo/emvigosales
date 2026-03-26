@@ -109,7 +109,7 @@ const LeadsTable = ({
         </Select>
         {assignedUsers.length > 0 && (
           <Select value={assignedFilter} onValueChange={v => { setAssignedFilter(v); setPage(1); }}>
-            <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue placeholder="Assign" /></SelectTrigger>
+            <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue placeholder="Assigned" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Users</SelectItem>
               {assignedUsers.map(name => <SelectItem key={name} value={name}>{name}</SelectItem>)}
