@@ -149,11 +149,45 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setComments(prev => [...prev, systemComment]);
   }, []);
 
+  const addConnectNote = useCallback((leadId: string, content: string, userName: string) => {
+    const note: ConnectNote = {
+      id: `cn-${Date.now()}`,
+      content,
+      user_name: userName,
+      created_at: new Date().toISOString(),
+    };
+    setLeads(prev => prev.map(l =>
+      l.id === leadId ? { ...l, connect_notes: [...l.connect_notes, note] } : l
+    ));
+  }, []);
+
+  const updateLeadStatus = useCallback((leadId: string, status: LeadStatus, messageType: 'A' | 'B', comment: string, userName: string, userRole: string, priority?: PriorityColor) => {
+    setLeads(prev => prev.map(l =>
+      l.id === leadId ? {
+        ...l,
+        status,
+        selected_message: messageType,
+        ...(priority ? { priority_color: priority } : {}),
+      } : l
+    ));
+    const newComment: Comment = {
+      id: `c-${Date.now()}`,
+      lead_id: leadId,
+      user_id: userName,
+      user_name: userName,
+      user_role: userRole,
+      content: comment,
+      created_at: new Date().toISOString(),
+    };
+    setComments(prev => [...prev, newComment]);
+  }, []);
+
   return (
     <LeadsContext.Provider value={{
       leads, reps, comments, updateLead, assignLeads, autoDistribute,
       addComment, toggleRepLeave, reassignLeadsFromRep, addLeads,
       addReminder, removeReminder, reassignLead, setPriority,
+      addConnectNote, updateLeadStatus,
     }}>
       {children}
     </LeadsContext.Provider>
