@@ -72,7 +72,6 @@ export const STATUS_COLORS: Record<LeadStatus, string> = {
   connection_sent: 'bg-orange-100 text-orange-700',
   request_accepted: 'bg-emerald-100 text-emerald-700',
   response_back: 'bg-green-100 text-green-700',
-  meeting: 'bg-purple-100 text-purple-700',
   converted_to_customer: 'bg-teal-100 text-teal-700',
 };
 
