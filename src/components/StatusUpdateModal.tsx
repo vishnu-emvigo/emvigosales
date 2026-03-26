@@ -29,12 +29,13 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const needsPriority = COLOR_REQUIRED_STATUSES.includes(status as LeadStatus);
+  const hasExistingNote = lead.connect_notes.length > 0;
 
   const validate = () => {
     const errs: Record<string, string> = {};
     if (!status) errs.status = 'Status is required';
     if (!messageType) errs.messageType = 'Message type must be selected';
-    if (!connectNote.trim()) errs.connectNote = 'Connect note is required';
+    if (!hasExistingNote && !connectNote.trim()) errs.connectNote = 'Connect note is required';
     if (needsPriority && !priority) errs.priority = 'Priority color is mandatory for this status';
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -45,7 +46,7 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
     onSubmit({
       status: status as LeadStatus,
       messageType: messageType as 'A' | 'B',
-      connectNote: connectNote.trim(),
+      connectNote: hasExistingNote ? '' : connectNote.trim(),
       priority: needsPriority ? (priority as PriorityColor) : undefined,
     });
     setConnectNote('');
