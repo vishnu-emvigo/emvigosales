@@ -17,7 +17,7 @@ interface Props { leads: Lead[] }
 
 const StatusMiniCards = ({ leads }: Props) => {
   const navigate = useNavigate();
-  const statuses: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back'];
+  const statuses: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back', 'meeting', 'converted_to_customer'];
 
   return (
     <div className="bg-card rounded-xl border border-border p-5 shadow-card">
