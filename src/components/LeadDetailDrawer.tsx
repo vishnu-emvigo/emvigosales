@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Lead, LeadStatus, STATUS_LABELS } from '@/types/leads';
-import { MOCK_COMMENTS } from '@/data/mockData';
+import { useLeads } from '@/contexts/LeadsContext';
+import { useAuth } from '@/contexts/AuthContext';
 import StatusBadge from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,16 +18,54 @@ interface LeadDetailDrawerProps {
   onClose: () => void;
 }
 
-const STATUS_FLOW: LeadStatus[] = ['not_assigned', 'assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back'];
+const STATUS_FLOW: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back'];
 
 const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
+  const { updateLead, addComment, comments } = useLeads();
+  const { user } = useAuth();
   const [notes, setNotes] = useState('');
   const [comment, setComment] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<LeadStatus | ''>('');
+  const [reminderDate, setReminderDate] = useState('');
+
+  useEffect(() => {
+    if (lead) {
+      setNotes(lead.response_notes || '');
+      setReminderDate(lead.reminder_date || '');
+    }
+  }, [lead]);
 
   if (!lead) return null;
 
-  const comments = MOCK_COMMENTS.filter(c => c.lead_id === lead.id);
+  const leadComments = comments.filter(c => c.lead_id === lead.id);
+
+  const handleStatusChange = (status: LeadStatus) => {
+    updateLead(lead.id, { status });
+    toast.success(`Status updated to ${STATUS_LABELS[status]}`);
+  };
+
+  const handleSelectMessage = (msg: 'A' | 'B') => {
+    updateLead(lead.id, { selected_message: msg });
+    toast.success(`Message ${msg} selected`);
+  };
+
+  const handleSaveNotes = () => {
+    updateLead(lead.id, { response_notes: notes });
+    toast.success('Notes saved');
+  };
+
+  const handleSetReminder = () => {
+    if (!reminderDate) return toast.error('Select a date');
+    updateLead(lead.id, { reminder_date: reminderDate });
+    toast.success('Reminder set');
+  };
+
+  const handleAddComment = () => {
+    if (!comment.trim() || !user) return;
+    const roleLabel = user.role === 'admin' ? 'Admin' : user.role === 'sales_admin' ? 'Sales Admin' : 'Sales Rep';
+    addComment(lead.id, user.id, user.name, roleLabel, comment.trim());
+    toast.success('Comment added');
+    setComment('');
+  };
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
@@ -37,7 +76,6 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
         </SheetHeader>
 
         <div className="space-y-6">
-          {/* Basic Info */}
           <section className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Basic Info</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
@@ -51,7 +89,6 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
           <Separator />
 
-          {/* Company Profile */}
           <section className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Company Profile</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">{lead.company_profile}</p>
@@ -59,7 +96,6 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
           <Separator />
 
-          {/* Person Summary */}
           <section className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Person Summary</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">{lead.person_summary}</p>
@@ -67,7 +103,6 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
           <Separator />
 
-          {/* Messaging */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold text-foreground">Messaging</h3>
             <div className="space-y-2">
@@ -75,7 +110,7 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium text-muted-foreground">Message A</span>
                   <Button size="sm" variant={lead.selected_message === 'A' ? 'default' : 'outline'} className="h-6 text-xs"
-                    onClick={() => toast.success('Message A selected')}>
+                    onClick={() => handleSelectMessage('A')}>
                     {lead.selected_message === 'A' ? 'Selected' : 'Use A'}
                   </Button>
                 </div>
@@ -85,7 +120,7 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium text-muted-foreground">Message B</span>
                   <Button size="sm" variant={lead.selected_message === 'B' ? 'default' : 'outline'} className="h-6 text-xs"
-                    onClick={() => toast.success('Message B selected')}>
+                    onClick={() => handleSelectMessage('B')}>
                     {lead.selected_message === 'B' ? 'Selected' : 'Use B'}
                   </Button>
                 </div>
@@ -96,56 +131,49 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
           <Separator />
 
-          {/* Status Update */}
           <section className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Update Status</h3>
-            <div className="flex gap-2">
-              <Select value={selectedStatus} onValueChange={v => setSelectedStatus(v as LeadStatus)}>
-                <SelectTrigger className="h-9"><SelectValue placeholder="Change status..." /></SelectTrigger>
-                <SelectContent>
-                  {STATUS_FLOW.filter(s => s !== 'not_assigned').map(s => (
-                    <SelectItem key={s} value={s}>{STATUS_LABELS[s]}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button size="sm" className="h-9" onClick={() => { toast.success('Status updated'); setSelectedStatus(''); }}>Update</Button>
+            <div className="flex flex-wrap gap-1.5">
+              {STATUS_FLOW.map(s => (
+                <Button key={s} size="sm" variant={lead.status === s ? 'default' : 'outline'} className="h-7 text-xs"
+                  onClick={() => handleStatusChange(s)}>
+                  {STATUS_LABELS[s]}
+                </Button>
+              ))}
             </div>
           </section>
 
           <Separator />
 
-          {/* Notes */}
           <section className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Notes</h3>
             <Textarea placeholder="Add notes..." value={notes} onChange={e => setNotes(e.target.value)} rows={3} />
-            <Button size="sm" onClick={() => { toast.success('Notes saved'); setNotes(''); }}>Save Notes</Button>
+            <Button size="sm" onClick={handleSaveNotes}>Save Notes</Button>
           </section>
 
           <Separator />
 
-          {/* Reminder */}
           <section className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Reminder</h3>
             <div className="flex gap-2">
-              <Input type="date" className="h-9" defaultValue={lead.reminder_date || ''} />
-              <Button size="sm" className="h-9" onClick={() => toast.success('Reminder set')}>Set</Button>
+              <Input type="date" className="h-9" value={reminderDate} onChange={e => setReminderDate(e.target.value)} />
+              <Button size="sm" className="h-9" onClick={handleSetReminder}>Set</Button>
             </div>
           </section>
 
           <Separator />
 
-          {/* Comments */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <MessageSquare className="w-4 h-4" /> Comments
             </h3>
             <div className="space-y-3 max-h-48 overflow-y-auto">
-              {comments.length === 0 && <p className="text-xs text-muted-foreground">No comments yet</p>}
-              {comments.map(c => (
+              {leadComments.length === 0 && <p className="text-xs text-muted-foreground">No comments yet</p>}
+              {leadComments.map(c => (
                 <div key={c.id} className="bg-muted/50 rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-medium text-foreground">{c.user_name}</span>
-                    <span className="text-xs text-muted-foreground">• {c.user_role}</span>
+                    <span className="text-xs text-muted-foreground">- {c.user_role}</span>
                   </div>
                   <p className="text-sm text-foreground">{c.content}</p>
                   <p className="text-xs text-muted-foreground mt-1">{new Date(c.created_at).toLocaleString()}</p>
@@ -153,8 +181,9 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
               ))}
             </div>
             <div className="flex gap-2">
-              <Input placeholder="Add a comment..." value={comment} onChange={e => setComment(e.target.value)} className="h-9" />
-              <Button size="icon" className="h-9 w-9" onClick={() => { toast.success('Comment added'); setComment(''); }}>
+              <Input placeholder="Add a comment..." value={comment} onChange={e => setComment(e.target.value)} className="h-9"
+                onKeyDown={e => e.key === 'Enter' && handleAddComment()} />
+              <Button size="icon" className="h-9 w-9" onClick={handleAddComment}>
                 <Send className="w-4 h-4" />
               </Button>
             </div>
