@@ -134,7 +134,7 @@ const LeadsTable = ({
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Location</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Status</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Priority</th>
-                <th className="px-3 py-2 text-left font-medium text-muted-foreground">Assign</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground">Assigned</th>
                 {showMessages && (
                   <>
                     <th className="px-3 py-2 text-left font-medium text-muted-foreground">Msg A</th>
