@@ -29,12 +29,13 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const needsPriority = COLOR_REQUIRED_STATUSES.includes(status as LeadStatus);
+  const hasExistingNote = lead.connect_notes.length > 0;
 
   const validate = () => {
     const errs: Record<string, string> = {};
     if (!status) errs.status = 'Status is required';
     if (!messageType) errs.messageType = 'Message type must be selected';
-    if (!connectNote.trim()) errs.connectNote = 'Connect note is required';
+    if (!hasExistingNote && !connectNote.trim()) errs.connectNote = 'Connect note is required';
     if (needsPriority && !priority) errs.priority = 'Priority color is mandatory for this status';
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -45,7 +46,7 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
     onSubmit({
       status: status as LeadStatus,
       messageType: messageType as 'A' | 'B',
-      connectNote: connectNote.trim(),
+      connectNote: hasExistingNote ? '' : connectNote.trim(),
       priority: needsPriority ? (priority as PriorityColor) : undefined,
     });
     setConnectNote('');
@@ -129,18 +130,25 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
             </div>
           )}
 
-          {/* Connect Note */}
-          <div className="space-y-1.5">
-            <Label className="text-sm font-medium">Connect Note *</Label>
-            <Textarea
-              placeholder="Add a note about this status change..."
-              value={connectNote}
-              onChange={e => { setConnectNote(e.target.value); setErrors(er => ({ ...er, connectNote: '' })); }}
-              rows={3}
-              className="text-sm"
-            />
-            {errors.connectNote && <p className="text-xs text-destructive">{errors.connectNote}</p>}
-          </div>
+          {/* Connect Note — only if not already submitted */}
+          {!hasExistingNote ? (
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium">Connect Note *</Label>
+              <Textarea
+                placeholder="Add a note about this status change..."
+                value={connectNote}
+                onChange={e => { setConnectNote(e.target.value); setErrors(er => ({ ...er, connectNote: '' })); }}
+                rows={3}
+                className="text-sm"
+              />
+              {errors.connectNote && <p className="text-xs text-destructive">{errors.connectNote}</p>}
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-muted-foreground">Connect Note</Label>
+              <p className="text-xs text-muted-foreground italic">Already submitted and locked.</p>
+            </div>
+          )}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>Cancel</Button>
