@@ -14,7 +14,7 @@ const ReportsPage = () => {
 
   const msgA = leads.filter(l => l.selected_message === 'A').length;
   const msgB = leads.filter(l => l.selected_message === 'B').length;
-  const responseRate = leads.length ? Math.round(((statusCounts['response_back'] || 0) / leads.length) * 100) : 0;
+  const responseRate = leads.length ? Math.round(((statusCounts['converted_to_customer'] || 0) / leads.length) * 100) : 0;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
