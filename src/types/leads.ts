@@ -62,7 +62,6 @@ export const STATUS_LABELS: Record<LeadStatus, string> = {
   connection_sent: 'Connection Sent',
   request_accepted: 'Request Accepted',
   response_back: 'Response Back',
-  meeting: 'Meeting',
   converted_to_customer: 'Converted to Customer',
 };
 
