@@ -55,7 +55,7 @@ const DataUploadPage = () => {
             reminders: [],
             batch_id: batchId,
             upload_date: today,
-            priority_color: 'none',
+            priority_color: 'none' as const,
           };
         }).filter(l => l.full_name);
 
