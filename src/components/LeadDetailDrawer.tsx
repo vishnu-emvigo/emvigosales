@@ -47,7 +47,9 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
   const handleStatusSubmit = (data: { status: LeadStatus; messageType: 'A' | 'B'; connectNote: string; priority?: PriorityColor }) => {
     if (!user) return;
     const roleLabel = user.role === 'admin' ? 'Admin' : user.role === 'sales_admin' ? 'Sales Admin' : 'Sales Rep';
-    addConnectNote(lead.id, data.connectNote, user.name);
+    if (data.connectNote) {
+      addConnectNote(lead.id, data.connectNote, user.name);
+    }
     updateLeadStatus(lead.id, data.status, data.messageType, user.name, roleLabel, data.priority);
     if (data.priority) {
       const labels: Record<PriorityColor, string> = { red: 'Red', amber: 'Amber', green: 'Green', none: 'None' };
