@@ -65,7 +65,6 @@ const DashboardPage = () => {
         </div>
 
         <StatusMiniCards leads={myLeads} />
-        <PriorityDistribution leads={myLeads} title="My Priority View" />
         <RemindersPanel leads={myLeads} userName={user?.name} />
       </motion.div>
     );
