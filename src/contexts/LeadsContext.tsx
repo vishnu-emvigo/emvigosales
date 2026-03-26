@@ -7,6 +7,8 @@ interface LeadsContextType {
   leads: Lead[];
   reps: SalesRep[];
   comments: Comment[];
+  globalFollowUpHours: number | null;
+  setGlobalFollowUpHours: (hours: number | null) => void;
   updateLead: (id: string, updates: Partial<Lead>) => void;
   assignLeads: (leadIds: string[], repName: string, repLinkedin: string) => void;
   autoDistribute: () => void;
