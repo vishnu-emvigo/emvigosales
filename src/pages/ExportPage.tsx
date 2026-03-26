@@ -16,11 +16,11 @@ const ExportPage = () => {
   const [batchFilter, setBatchFilter] = useState('');
 
   const exportCsv = (data: typeof leads, filename: string) => {
-    const headers = ['Sr No', 'Full Name', 'Company', 'Location', 'LinkedIn URL', 'Status', 'Assigned To', 'Selected Message', 'LinkedIn Profile Used', 'Response Notes', 'Reminder Date', 'Batch ID', 'Upload Date'];
+    const headers = ['Sr No', 'Full Name', 'Company', 'Location', 'LinkedIn URL', 'Status', 'Assigned To', 'Selected Message', 'LinkedIn Profile Used', 'Response Notes', 'Reminders', 'Batch ID', 'Upload Date'];
     const rows = data.map(l => [
       l.sr_no, l.full_name, l.company, l.location, l.linkedin_url, l.status,
       l.assigned_to || '', l.selected_message || '', l.linkedin_profile_used || '',
-      l.response_notes || '', l.reminder_date || '', l.batch_id, l.upload_date,
+      l.response_notes || '', l.reminders.map(r => r.datetime).join('; '), l.batch_id, l.upload_date,
     ]);
     const csv = [headers.join(','), ...rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });

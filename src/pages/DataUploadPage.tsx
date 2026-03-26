@@ -52,7 +52,7 @@ const DataUploadPage = () => {
             selected_message: null,
             linkedin_profile_used: null,
             response_notes: null,
-            reminder_date: null,
+            reminders: [],
             batch_id: batchId,
             upload_date: today,
           };
