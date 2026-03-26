@@ -8,7 +8,7 @@ import RepPerformanceTable from '@/components/dashboard/RepPerformanceTable';
 import RemindersPanel from '@/components/dashboard/RemindersPanel';
 import InactivityAlerts from '@/components/dashboard/InactivityAlerts';
 import CommentsActivity from '@/components/dashboard/CommentsActivity';
-import PriorityDistribution from '@/components/dashboard/PriorityDistribution';
+
 import HighPriorityAlerts from '@/components/dashboard/HighPriorityAlerts';
 import { Users, UserX, Activity, CheckCircle2, TrendingUp, Upload, ClipboardList, AlertTriangle, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -65,7 +65,6 @@ const DashboardPage = () => {
         </div>
 
         <StatusMiniCards leads={myLeads} />
-        <PriorityDistribution leads={myLeads} title="My Priority View" />
         <RemindersPanel leads={myLeads} userName={user?.name} />
       </motion.div>
     );
@@ -92,10 +91,7 @@ const DashboardPage = () => {
           <KPICard title="🟢 Green Leads" value={greenCount} icon={<CheckCircle2 className="w-5 h-5" />} href="/leads?priority=green" tooltip="Low urgency leads" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <StatusFunnel leads={leads} />
-          <PriorityDistribution leads={leads} />
-        </div>
+        <StatusFunnel leads={leads} />
 
         <RepPerformanceTable leads={leads} reps={reps} />
 
@@ -133,10 +129,7 @@ const DashboardPage = () => {
 
       <StatusMiniCards leads={leads} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <PriorityDistribution leads={leads} title="Priority Summary" />
-        <HighPriorityAlerts leads={leads} />
-      </div>
+      <HighPriorityAlerts leads={leads} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RepPerformanceTable leads={leads} reps={reps} compact />
