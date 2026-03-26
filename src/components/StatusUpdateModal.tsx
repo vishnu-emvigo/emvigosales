@@ -44,10 +44,10 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
     onSubmit({
       status: status as LeadStatus,
       messageType: messageType as 'A' | 'B',
-      comment: comment.trim(),
+      connectNote: connectNote.trim(),
       priority: needsPriority ? (priority as PriorityColor) : undefined,
     });
-    setComment('');
+    setConnectNote('');
     setErrors({});
   };
 
