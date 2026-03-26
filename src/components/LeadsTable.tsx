@@ -167,18 +167,37 @@ const LeadsTable = ({
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.location}</td>
                     <td className="px-3 py-1.5"><StatusBadge status={lead.status} /></td>
                     <td className="px-3 py-1.5" onClick={e => e.stopPropagation()}>
-                      {canSetPriority ? (
-                        <PriorityDot
-                          priority={lead.priority_color}
-                          interactive
-                          onSelect={(p) => setPriority(lead.id, p, user?.name || '')}
-                        />
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-xs">
-                          {pd.emoji && <span>{pd.emoji}</span>}
-                          <span className="text-muted-foreground">{pd.label}</span>
-                        </span>
-                      )}
+                      {(() => {
+                        const colorEligible = lead.status === 'request_accepted' || lead.status === 'response_back';
+                        if (canSetPriority && colorEligible) {
+                          return (
+                            <PriorityDot
+                              priority={lead.priority_color}
+                              interactive
+                              onSelect={(p) => setPriority(lead.id, p, user?.name || '')}
+                            />
+                          );
+                        }
+                        if (!colorEligible) {
+                          return (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="inline-flex items-center gap-1 text-xs cursor-default text-muted-foreground">
+                                  {pd.emoji && <span>{pd.emoji}</span>}
+                                  <span>{pd.label}</span>
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>Color can only be selected after Request Accepted stage</TooltipContent>
+                            </Tooltip>
+                          );
+                        }
+                        return (
+                          <span className="inline-flex items-center gap-1 text-xs">
+                            {pd.emoji && <span>{pd.emoji}</span>}
+                            <span className="text-muted-foreground">{pd.label}</span>
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.assigned_to || '—'}</td>
                     {showMessages && (

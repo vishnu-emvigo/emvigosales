@@ -28,7 +28,7 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
   const [priority, setPriority] = useState<PriorityColor | ''>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const needsPriority = status === 'request_accepted';
+  const needsPriority = COLOR_REQUIRED_STATUSES.includes(status as LeadStatus);
 
   const validate = () => {
     const errs: Record<string, string> = {};

@@ -155,15 +155,20 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const addConnectNote = useCallback((leadId: string, content: string, userName: string) => {
-    const note: ConnectNote = {
-      id: `cn-${Date.now()}`,
-      content,
-      user_name: userName,
-      created_at: new Date().toISOString(),
-    };
-    setLeads(prev => prev.map(l =>
-      l.id === leadId ? { ...l, connect_notes: [...l.connect_notes, note] } : l
-    ));
+    setLeads(prev => {
+      const lead = prev.find(l => l.id === leadId);
+      // Enforce one-time-only rule: if a connect note already exists, block addition
+      if (lead && lead.connect_notes.length > 0) return prev;
+      const note: ConnectNote = {
+        id: `cn-${Date.now()}`,
+        content,
+        user_name: userName,
+        created_at: new Date().toISOString(),
+      };
+      return prev.map(l =>
+        l.id === leadId ? { ...l, connect_notes: [...l.connect_notes, note] } : l
+      );
+    });
   }, []);
 
   const updateLeadStatus = useCallback((leadId: string, status: LeadStatus, messageType: 'A' | 'B', userName: string, userRole: string, priority?: PriorityColor) => {
