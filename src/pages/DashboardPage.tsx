@@ -25,7 +25,7 @@ const DashboardPage = () => {
   const unassigned = leads.filter(l => l.status === 'not_assigned').length;
   const activeStatuses: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent'];
   const activeLeads = leads.filter(l => activeStatuses.includes(l.status)).length;
-  const converted = leads.filter(l => l.status === 'response_back').length;
+  const converted = leads.filter(l => l.status === 'converted_to_customer').length;
   const assignedTotal = leads.filter(l => l.status !== 'not_assigned').length;
   const conversionRate = assignedTotal > 0 ? Math.round((converted / assignedTotal) * 100) : 0;
 
