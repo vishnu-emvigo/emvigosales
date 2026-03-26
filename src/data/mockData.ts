@@ -33,7 +33,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_b: 'Hello Ali, impressive traction with MediShout across NHS trusts! We have helped similar healthtech companies accelerate growth. Interested in a brief conversation?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
     linkedin_profile_used: null, response_notes: null, reminders: [],
-    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0],
+    batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
     id: 'lead-3', sr_no: 3,
