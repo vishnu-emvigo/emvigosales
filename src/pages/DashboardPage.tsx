@@ -23,27 +23,28 @@ const DashboardPage = () => {
   const today = new Date().toISOString().split('T')[0];
   const uploadedToday = leads.filter(l => l.upload_date === today).length;
   const unassigned = leads.filter(l => l.status === 'not_assigned').length;
-  const activeStatuses: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent'];
+  const activeStatuses: LeadStatus[] = ['assigned', 'inmail_sent', 'connection_sent'];
   const activeLeads = leads.filter(l => activeStatuses.includes(l.status)).length;
-  const converted = leads.filter(l => l.status === 'converted_to_customer').length;
+  const responseBack = leads.filter(l => l.status === 'response_back').length;
   const assignedTotal = leads.filter(l => l.status !== 'not_assigned').length;
-  const conversionRate = assignedTotal > 0 ? Math.round((converted / assignedTotal) * 100) : 0;
+  const conversionRate = assignedTotal > 0 ? Math.round((responseBack / assignedTotal) * 100) : 0;
 
   const myLeads = leads.filter(l => l.assigned_to === user?.name);
   const myPending = myLeads.filter(l => l.status === 'assigned').length;
 
   // ─── SALES REP DASHBOARD ─────────────────────────
   if (isRep) {
+    const myResponseBack = myLeads.filter(l => l.status === 'response_back').length;
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
         <h1 className="text-xl font-semibold text-foreground">My Dashboard</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <KPICard title="My Leads" value={myLeads.length} icon={<Users className="w-5 h-5" />} href="/my-leads" />
           <KPICard title="Pending" value={myPending} icon={<Activity className="w-5 h-5" />} alert={myPending > 0} />
-          <KPICard title="Completed" value={myLeads.filter(l => l.status === 'converted_to_customer').length} icon={<CheckCircle2 className="w-5 h-5" />} />
+          <KPICard title="Response Back" value={myResponseBack} icon={<CheckCircle2 className="w-5 h-5" />} />
           <KPICard
             title="My Conversion"
-            value={myLeads.length > 0 ? `${Math.round((myLeads.filter(l => l.status === 'converted_to_customer').length / myLeads.length) * 100)}%` : '0%'}
+            value={myLeads.length > 0 ? `${Math.round((myResponseBack / myLeads.length) * 100)}%` : '0%'}
             icon={<TrendingUp className="w-5 h-5" />}
           />
         </div>
@@ -63,8 +64,8 @@ const DashboardPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <KPICard title="Total Leads" value={leads.length} subtitle={`+${uploadedToday} today`} icon={<Users className="w-5 h-5" />} href="/leads" tooltip="Click to view all leads" />
           <KPICard title="Unassigned" value={unassigned} icon={<UserX className="w-5 h-5" />} href="/unassigned" alert={unassigned > 3} tooltip="Leads needing assignment" />
-          <KPICard title="Active" value={activeLeads} icon={<Activity className="w-5 h-5" />} tooltip="Assigned, mail sent, or connection sent" />
-          <KPICard title="Converted" value={converted} icon={<CheckCircle2 className="w-5 h-5" />} />
+          <KPICard title="Active" value={activeLeads} icon={<Activity className="w-5 h-5" />} tooltip="Assigned, inmail sent, or connection sent" />
+          <KPICard title="Response Back" value={responseBack} icon={<CheckCircle2 className="w-5 h-5" />} />
           <KPICard title="Conversion Rate" value={`${conversionRate}%`} icon={<TrendingUp className="w-5 h-5" />} tooltip="Response back / total assigned" />
         </div>
 

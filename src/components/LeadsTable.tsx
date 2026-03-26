@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Lead, LeadStatus, STATUS_LABELS, PriorityColor, canModifyLead } from '@/types/leads';
+import { Lead, LeadStatus, STATUS_LABELS, PriorityColor, PRIORITY_LABELS, canModifyLead } from '@/types/leads';
 import StatusBadge from '@/components/StatusBadge';
 import PriorityDot from '@/components/PriorityDot';
 import { Input } from '@/components/ui/input';
@@ -25,11 +25,18 @@ interface LeadsTableProps {
 const truncate = (text: string, max = 80) =>
   text.length > max ? text.slice(0, max) + '…' : text;
 
-const ROW_PRIORITY_BG: Record<PriorityColor, string> = {
-  red: 'bg-destructive/5',
-  amber: 'bg-amber-50',
-  green: 'bg-emerald-50',
+const ROW_BORDER_COLOR: Record<PriorityColor, string> = {
+  red: 'border-l-4 border-l-destructive',
+  amber: 'border-l-4 border-l-amber-500',
+  green: 'border-l-4 border-l-emerald-500',
   none: '',
+};
+
+const PRIORITY_DISPLAY: Record<PriorityColor, { emoji: string; label: string }> = {
+  red: { emoji: '🔴', label: 'Red' },
+  amber: { emoji: '🟠', label: 'Amber' },
+  green: { emoji: '🟢', label: 'Green' },
+  none: { emoji: '', label: '—' },
 };
 
 const LeadsTable = ({
@@ -95,9 +102,9 @@ const LeadsTable = ({
           <SelectTrigger className="w-[130px] h-8 text-xs"><SelectValue placeholder="Priority" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Priorities</SelectItem>
-            <SelectItem value="red">🔴 High</SelectItem>
-            <SelectItem value="amber">🟠 Medium</SelectItem>
-            <SelectItem value="green">🟢 Low</SelectItem>
+            <SelectItem value="red">🔴 Red</SelectItem>
+            <SelectItem value="amber">🟠 Amber</SelectItem>
+            <SelectItem value="green">🟢 Green</SelectItem>
             <SelectItem value="none">No Priority</SelectItem>
           </SelectContent>
         </Select>
@@ -122,12 +129,12 @@ const LeadsTable = ({
                 {selectable && (
                   <th className="w-8 px-2 py-2"><Checkbox checked={allSelected} onCheckedChange={toggleAll} /></th>
                 )}
-                <th className="px-2 py-2 text-left font-medium text-muted-foreground w-10">P</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground w-10">#</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Full Name</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Company</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Location</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Status</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground">Priority</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Assigned To</th>
                 {showMessages && (
                   <>
@@ -141,29 +148,37 @@ const LeadsTable = ({
             <tbody>
               {paginated.map(lead => {
                 const canSetPriority = canModifyLead(user?.name, lead);
+                const pd = PRIORITY_DISPLAY[lead.priority_color];
                 return (
                   <tr
                     key={lead.id}
                     onClick={() => onLeadClick(lead)}
-                    className={`border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer transition-colors ${ROW_PRIORITY_BG[lead.priority_color]}`}
+                    className={`border-b border-border last:border-0 hover:bg-muted/30 cursor-pointer transition-colors ${ROW_BORDER_COLOR[lead.priority_color]}`}
                   >
                     {selectable && (
                       <td className="px-2 py-1.5" onClick={e => e.stopPropagation()}>
                         <Checkbox checked={selectedIds.includes(lead.id)} onCheckedChange={() => toggleOne(lead.id)} />
                       </td>
                     )}
-                    <td className="px-2 py-1.5" onClick={e => e.stopPropagation()}>
-                      <PriorityDot
-                        priority={lead.priority_color}
-                        interactive={canSetPriority}
-                        onSelect={canSetPriority ? (p) => setPriority(lead.id, p, user?.name || '') : undefined}
-                      />
-                    </td>
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.sr_no}</td>
                     <td className="px-3 py-1.5 font-medium text-foreground">{lead.full_name}</td>
                     <td className="px-3 py-1.5 text-foreground">{lead.company}</td>
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.location}</td>
                     <td className="px-3 py-1.5"><StatusBadge status={lead.status} /></td>
+                    <td className="px-3 py-1.5" onClick={e => e.stopPropagation()}>
+                      {canSetPriority ? (
+                        <PriorityDot
+                          priority={lead.priority_color}
+                          interactive
+                          onSelect={(p) => setPriority(lead.id, p, user?.name || '')}
+                        />
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs">
+                          {pd.emoji && <span>{pd.emoji}</span>}
+                          <span className="text-muted-foreground">{pd.label}</span>
+                        </span>
+                      )}
+                    </td>
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.assigned_to || '—'}</td>
                     {showMessages && (
                       <>

@@ -5,18 +5,17 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 const STAGE_COLORS: Record<LeadStatus, string> = {
   not_assigned: 'border-muted-foreground/30 bg-muted/50',
   assigned: 'border-blue-300 bg-blue-50',
-  mail_sent: 'border-amber-300 bg-amber-50',
+  inmail_sent: 'border-amber-300 bg-amber-50',
   connection_sent: 'border-orange-300 bg-orange-50',
   request_accepted: 'border-emerald-300 bg-emerald-50',
   response_back: 'border-green-400 bg-green-50',
-  converted_to_customer: 'border-teal-300 bg-teal-50',
 };
 
 interface Props { leads: Lead[] }
 
 const StatusMiniCards = ({ leads }: Props) => {
   const navigate = useNavigate();
-  const statuses: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back', 'converted_to_customer'];
+  const statuses: LeadStatus[] = ['assigned', 'inmail_sent', 'connection_sent', 'request_accepted', 'response_back'];
 
   return (
     <div className="bg-card rounded-xl border border-border p-5 shadow-card">

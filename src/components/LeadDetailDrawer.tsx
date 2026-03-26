@@ -4,6 +4,7 @@ import { useLeads } from '@/contexts/LeadsContext';
 import { useAuth } from '@/contexts/AuthContext';
 import StatusBadge from '@/components/StatusBadge';
 import PriorityDot from '@/components/PriorityDot';
+import PriorityModal from '@/components/PriorityModal';
 import ReassignModal from '@/components/ReassignModal';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,7 +20,7 @@ interface LeadDetailDrawerProps {
   onClose: () => void;
 }
 
-const STATUS_FLOW: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back', 'converted_to_customer'];
+const STATUS_FLOW: LeadStatus[] = ['assigned', 'inmail_sent', 'connection_sent', 'request_accepted', 'response_back'];
 
 const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
   const { updateLead, addComment, comments, addReminder, removeReminder, setPriority } = useLeads();
@@ -29,6 +30,7 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
   const [reminderDate, setReminderDate] = useState('');
   const [reminderTime, setReminderTime] = useState('10:00');
   const [reassignOpen, setReassignOpen] = useState(false);
+  const [priorityModalOpen, setPriorityModalOpen] = useState(false);
 
   useEffect(() => {
     if (lead) {
@@ -46,8 +48,24 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
   const handleStatusChange = (status: LeadStatus) => {
     if (!isAssigned) return toast.error('Only the assigned user can change status');
+    // Enforce priority modal at request_accepted
+    if (status === 'request_accepted') {
+      setPriorityModalOpen(true);
+      return;
+    }
     updateLead(lead.id, { status });
     toast.success(`Status updated to ${STATUS_LABELS[status]}`);
+  };
+
+  const handlePrioritySubmit = (priority: PriorityColor) => {
+    if (!lead || !user) return;
+    updateLead(lead.id, { status: 'request_accepted' as LeadStatus, priority_color: priority });
+    const labels: Record<PriorityColor, string> = { red: 'Red', amber: 'Amber', green: 'Green', none: 'None' };
+    addComment(lead.id, 'system', 'System', 'System',
+      `Status updated to Request Accepted and marked as ${labels[priority]} by ${user.name}`
+    );
+    toast.success(`Status updated to Request Accepted — Priority: ${labels[priority]}`);
+    setPriorityModalOpen(false);
   };
 
   const handleSelectMessage = (msg: 'A' | 'B') => {
@@ -131,7 +149,7 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
               {isAssigned ? (
                 <div className="flex items-center gap-3">
                   {(['red', 'amber', 'green', 'none'] as PriorityColor[]).map(p => {
-                    const labels: Record<PriorityColor, string> = { red: '🔴 High', amber: '🟠 Medium', green: '🟢 Low', none: 'None' };
+                    const labels: Record<PriorityColor, string> = { red: '🔴 Red', amber: '🟠 Amber', green: '🟢 Green', none: 'None' };
                     return (
                       <Button
                         key={p}
@@ -304,6 +322,7 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
           </div>
         </SheetContent>
       </Sheet>
+      <PriorityModal open={priorityModalOpen} onClose={() => setPriorityModalOpen(false)} onSubmit={handlePrioritySubmit} />
       <ReassignModal lead={lead} open={reassignOpen} onClose={() => setReassignOpen(false)} />
     </>
   );
