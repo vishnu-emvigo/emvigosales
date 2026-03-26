@@ -56,7 +56,8 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const idx = ids.indexOf(l.id);
         if (idx === -1) return l;
         const rep = activeReps[idx % activeReps.length];
-        return { ...l, status: 'assigned' as LeadStatus, assigned_to: rep.name, linkedin_profile_used: rep.linkedin_profile };
+        const now = new Date().toISOString();
+        return { ...l, status: 'assigned' as LeadStatus, assigned_to: rep.name, linkedin_profile_used: rep.linkedin_profile, assigned_at: now, last_action_at: now };
       });
     });
   }, [reps]);
