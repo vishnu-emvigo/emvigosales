@@ -49,6 +49,8 @@ const DataUploadPage = () => {
             message_b: getVal('message b') || getVal('message_b') || '',
             status: 'not_assigned' as const,
             assigned_to: null,
+            assigned_at: null,
+            last_action_at: null,
             selected_message: null,
             linkedin_profile_used: null,
             response_notes: null,
