@@ -3,7 +3,7 @@ import { useLeads } from '@/contexts/LeadsContext';
 import StatCard from '@/components/StatCard';
 import StatusBadge from '@/components/StatusBadge';
 import { LeadStatus, STATUS_LABELS } from '@/types/leads';
-import { Users, Upload, UserCheck, Clock, BarChart3, Bell } from 'lucide-react';
+import { Users, Upload, UserCheck, BarChart3, Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const DashboardPage = () => {
@@ -15,12 +15,21 @@ const DashboardPage = () => {
   const today = new Date().toISOString().split('T')[0];
   const uploadedToday = leads.filter(l => l.upload_date === today).length;
   const unassigned = leads.filter(l => l.status === 'not_assigned').length;
-  const remindersToday = myLeads.filter(l => l.reminder_date === today).length;
+
+  // Count leads with reminders due today
+  const remindersToday = myLeads.filter(l =>
+    l.reminders.some(r => r.datetime.startsWith(today))
+  ).length;
 
   const statusCounts = myLeads.reduce((acc, l) => {
     acc[l.status] = (acc[l.status] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
+
+  // Today's follow-ups
+  const todayFollowUps = myLeads.filter(l =>
+    l.reminders.some(r => r.datetime.startsWith(today))
+  );
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
@@ -35,6 +44,29 @@ const DashboardPage = () => {
         <StatCard title="Reminders Today" value={remindersToday} icon={<Bell className="w-5 h-5" />} />
         {isRep && <StatCard title="Completed" value={statusCounts['response_back'] || 0} icon={<BarChart3 className="w-5 h-5" />} />}
       </div>
+
+      {/* Today's Follow-ups */}
+      {todayFollowUps.length > 0 && (
+        <div className="bg-card rounded-xl border border-border p-5 shadow-card">
+          <h2 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+            <Bell className="w-4 h-4 text-primary" /> Today's Follow-ups
+          </h2>
+          <div className="space-y-2">
+            {todayFollowUps.map(lead => (
+              <div key={lead.id} className="flex items-center gap-3 py-2 px-3 rounded-lg bg-muted/30 text-sm">
+                <span className="font-medium text-foreground">{lead.full_name}</span>
+                <span className="text-muted-foreground">{lead.company}</span>
+                <StatusBadge status={lead.status} />
+                <span className="ml-auto text-xs text-muted-foreground">
+                  {lead.reminders.filter(r => r.datetime.startsWith(today)).map(r =>
+                    new Date(r.datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  ).join(', ')}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card rounded-xl border border-border p-5 shadow-card">

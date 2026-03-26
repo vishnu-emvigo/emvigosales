@@ -21,19 +21,21 @@ const UnassignedLeadsPage = () => {
   const activeReps = reps.filter(r => r.status === 'active');
   const currentLead = selectedLead ? leads.find(l => l.id === selectedLead.id) || null : null;
 
-  const handleAssign = () => {
-    if (selectedIds.length === 0) return toast.error('Select leads first');
-    if (isRep) {
-      assignLeads(selectedIds, user!.name, 'https://linkedin.com/in/sales-rep');
-      toast.success(`${selectedIds.length} leads assigned to you`);
-    } else {
-      if (!assignTo) return toast.error('Select a sales rep');
-      const rep = activeReps.find(r => r.name === assignTo);
-      assignLeads(selectedIds, assignTo, rep?.linkedin_profile || '');
-      toast.success(`${selectedIds.length} leads assigned to ${assignTo}`);
-    }
+  const handleAssignToRep = () => {
+    if (selectedIds.length === 0 || !assignTo) return toast.error('Select leads and a rep');
+    const rep = activeReps.find(r => r.name === assignTo);
+    assignLeads(selectedIds, assignTo, rep?.linkedin_profile || '');
+    toast.success(`${selectedIds.length} leads assigned to ${assignTo}`);
     setSelectedIds([]);
     setAssignTo('');
+  };
+
+  const handleAssignToMe = () => {
+    if (selectedIds.length === 0) return toast.error('Select leads first');
+    if (!user) return;
+    assignLeads(selectedIds, user.name, '');
+    toast.success(`${selectedIds.length} leads assigned to you`);
+    setSelectedIds([]);
   };
 
   return (
@@ -48,18 +50,28 @@ const UnassignedLeadsPage = () => {
         actions={
           <div className="flex items-center gap-2">
             {!isRep && (
-              <Select value={assignTo} onValueChange={setAssignTo}>
-                <SelectTrigger className="w-[160px] h-9"><SelectValue placeholder="Assign to..." /></SelectTrigger>
-                <SelectContent>
-                  {activeReps.map(r => (
-                    <SelectItem key={r.id} value={r.name}>{r.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <>
+                <Select value={assignTo} onValueChange={setAssignTo}>
+                  <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue placeholder="Assign to..." /></SelectTrigger>
+                  <SelectContent>
+                    {activeReps.map(r => (
+                      <SelectItem key={r.id} value={r.name}>{r.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button size="sm" className="h-8 text-xs" onClick={handleAssignToRep} disabled={selectedIds.length === 0 || !assignTo}>
+                  Assign ({selectedIds.length})
+                </Button>
+                <Button size="sm" variant="secondary" className="h-8 text-xs" onClick={handleAssignToMe} disabled={selectedIds.length === 0}>
+                  Assign to Me
+                </Button>
+              </>
             )}
-            <Button size="sm" className="h-9" onClick={handleAssign} disabled={selectedIds.length === 0}>
-              {isRep ? 'Assign to Me' : `Assign (${selectedIds.length})`}
-            </Button>
+            {isRep && (
+              <Button size="sm" className="h-8 text-xs" onClick={handleAssignToMe} disabled={selectedIds.length === 0}>
+                Assign to Me ({selectedIds.length})
+              </Button>
+            )}
           </div>
         }
       />

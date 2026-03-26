@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Lead, LeadStatus, STATUS_LABELS } from '@/types/leads';
+import { Lead, LeadStatus, STATUS_LABELS, canModifyLead } from '@/types/leads';
 import { useLeads } from '@/contexts/LeadsContext';
 import { useAuth } from '@/contexts/AuthContext';
 import StatusBadge from '@/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { ExternalLink, MessageSquare, Send } from 'lucide-react';
+import { ExternalLink, MessageSquare, Send, Plus, X, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface LeadDetailDrawerProps {
@@ -21,42 +20,52 @@ interface LeadDetailDrawerProps {
 const STATUS_FLOW: LeadStatus[] = ['assigned', 'mail_sent', 'connection_sent', 'request_accepted', 'response_back'];
 
 const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
-  const { updateLead, addComment, comments } = useLeads();
+  const { updateLead, addComment, comments, addReminder, removeReminder } = useLeads();
   const { user } = useAuth();
   const [notes, setNotes] = useState('');
   const [comment, setComment] = useState('');
   const [reminderDate, setReminderDate] = useState('');
+  const [reminderTime, setReminderTime] = useState('10:00');
 
   useEffect(() => {
     if (lead) {
       setNotes(lead.response_notes || '');
-      setReminderDate(lead.reminder_date || '');
+      setReminderDate('');
+      setReminderTime('10:00');
     }
   }, [lead]);
 
   if (!lead) return null;
 
+  const isAssigned = canModifyLead(user?.name, lead);
   const leadComments = comments.filter(c => c.lead_id === lead.id);
 
   const handleStatusChange = (status: LeadStatus) => {
+    if (!isAssigned) return toast.error('Only the assigned user can change status');
     updateLead(lead.id, { status });
     toast.success(`Status updated to ${STATUS_LABELS[status]}`);
   };
 
   const handleSelectMessage = (msg: 'A' | 'B') => {
+    if (!isAssigned) return toast.error('Only the assigned user can select messages');
     updateLead(lead.id, { selected_message: msg });
     toast.success(`Message ${msg} selected`);
   };
 
   const handleSaveNotes = () => {
+    if (!isAssigned) return toast.error('Only the assigned user can edit notes');
     updateLead(lead.id, { response_notes: notes });
     toast.success('Notes saved');
   };
 
-  const handleSetReminder = () => {
+  const handleAddReminder = () => {
+    if (!isAssigned) return toast.error('Only the assigned user can set reminders');
     if (!reminderDate) return toast.error('Select a date');
-    updateLead(lead.id, { reminder_date: reminderDate });
-    toast.success('Reminder set');
+    const datetime = `${reminderDate}T${reminderTime}`;
+    addReminder(lead.id, datetime);
+    toast.success('Reminder added');
+    setReminderDate('');
+    setReminderTime('10:00');
   };
 
   const handleAddComment = () => {
@@ -72,15 +81,24 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
       <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
         <SheetHeader className="pb-4">
           <SheetTitle className="text-lg">{lead.full_name}</SheetTitle>
-          <StatusBadge status={lead.status} />
+          <div className="flex items-center gap-2">
+            <StatusBadge status={lead.status} />
+            {!isAssigned && (
+              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                <Lock className="w-3 h-3" /> Read-only
+              </span>
+            )}
+          </div>
         </SheetHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
+          {/* Basic Info */}
           <section className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Basic Info</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div><span className="text-muted-foreground">Company:</span> <span className="text-foreground">{lead.company}</span></div>
               <div><span className="text-muted-foreground">Location:</span> <span className="text-foreground">{lead.location}</span></div>
+              {lead.assigned_to && <div className="col-span-2"><span className="text-muted-foreground">Assigned To:</span> <span className="text-foreground">{lead.assigned_to}</span></div>}
             </div>
             <a href={lead.linkedin_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
               LinkedIn Profile <ExternalLink className="w-3 h-3" />
@@ -89,6 +107,7 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
           <Separator />
 
+          {/* Company Profile */}
           <section className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Company Profile</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">{lead.company_profile}</p>
@@ -96,6 +115,7 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
           <Separator />
 
+          {/* Person Summary */}
           <section className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Person Summary</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">{lead.person_summary}</p>
@@ -103,26 +123,31 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
           <Separator />
 
+          {/* Messaging */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold text-foreground">Messaging</h3>
             <div className="space-y-2">
               <div className={`p-3 rounded-lg border text-sm ${lead.selected_message === 'A' ? 'border-primary bg-primary/5' : 'border-border'}`}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium text-muted-foreground">Message A</span>
-                  <Button size="sm" variant={lead.selected_message === 'A' ? 'default' : 'outline'} className="h-6 text-xs"
-                    onClick={() => handleSelectMessage('A')}>
-                    {lead.selected_message === 'A' ? 'Selected' : 'Use A'}
-                  </Button>
+                  {isAssigned && (
+                    <Button size="sm" variant={lead.selected_message === 'A' ? 'default' : 'outline'} className="h-6 text-xs"
+                      onClick={() => handleSelectMessage('A')}>
+                      {lead.selected_message === 'A' ? 'Selected' : 'Use A'}
+                    </Button>
+                  )}
                 </div>
                 <p className="text-foreground">{lead.message_a}</p>
               </div>
               <div className={`p-3 rounded-lg border text-sm ${lead.selected_message === 'B' ? 'border-primary bg-primary/5' : 'border-border'}`}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium text-muted-foreground">Message B</span>
-                  <Button size="sm" variant={lead.selected_message === 'B' ? 'default' : 'outline'} className="h-6 text-xs"
-                    onClick={() => handleSelectMessage('B')}>
-                    {lead.selected_message === 'B' ? 'Selected' : 'Use B'}
-                  </Button>
+                  {isAssigned && (
+                    <Button size="sm" variant={lead.selected_message === 'B' ? 'default' : 'outline'} className="h-6 text-xs"
+                      onClick={() => handleSelectMessage('B')}>
+                      {lead.selected_message === 'B' ? 'Selected' : 'Use B'}
+                    </Button>
+                  )}
                 </div>
                 <p className="text-foreground">{lead.message_b}</p>
               </div>
@@ -131,38 +156,81 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
           <Separator />
 
+          {/* Status — only editable if assigned */}
           <section className="space-y-2">
-            <h3 className="text-sm font-semibold text-foreground">Update Status</h3>
-            <div className="flex flex-wrap gap-1.5">
-              {STATUS_FLOW.map(s => (
-                <Button key={s} size="sm" variant={lead.status === s ? 'default' : 'outline'} className="h-7 text-xs"
-                  onClick={() => handleStatusChange(s)}>
-                  {STATUS_LABELS[s]}
+            <h3 className="text-sm font-semibold text-foreground">
+              Status {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
+            </h3>
+            {isAssigned ? (
+              <div className="flex flex-wrap gap-1.5">
+                {STATUS_FLOW.map(s => (
+                  <Button key={s} size="sm" variant={lead.status === s ? 'default' : 'outline'} className="h-7 text-xs"
+                    onClick={() => handleStatusChange(s)}>
+                    {STATUS_LABELS[s]}
+                  </Button>
+                ))}
+              </div>
+            ) : (
+              <StatusBadge status={lead.status} />
+            )}
+          </section>
+
+          <Separator />
+
+          {/* Notes — only editable if assigned */}
+          <section className="space-y-2">
+            <h3 className="text-sm font-semibold text-foreground">
+              Notes {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
+            </h3>
+            {isAssigned ? (
+              <>
+                <Textarea placeholder="Add notes..." value={notes} onChange={e => setNotes(e.target.value)} rows={3} />
+                <Button size="sm" onClick={handleSaveNotes}>Save Notes</Button>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">{lead.response_notes || 'No notes yet'}</p>
+            )}
+          </section>
+
+          <Separator />
+
+          {/* Reminders — multiple, only editable if assigned */}
+          <section className="space-y-2">
+            <h3 className="text-sm font-semibold text-foreground">
+              Reminders {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
+            </h3>
+            {lead.reminders.length > 0 && (
+              <div className="space-y-1.5">
+                {lead.reminders.map(r => {
+                  const dt = new Date(r.datetime);
+                  return (
+                    <div key={r.id} className="flex items-center gap-2 bg-muted/50 rounded px-3 py-1.5 text-sm">
+                      <span className="text-foreground">{dt.toLocaleDateString()} at {dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      {isAssigned && (
+                        <Button size="icon" variant="ghost" className="h-5 w-5 ml-auto" onClick={() => removeReminder(lead.id, r.id)}>
+                          <X className="w-3 h-3" />
+                        </Button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {lead.reminders.length === 0 && <p className="text-xs text-muted-foreground">No reminders set</p>}
+            {isAssigned && (
+              <div className="flex gap-2 items-end">
+                <Input type="date" className="h-8 text-xs flex-1" value={reminderDate} onChange={e => setReminderDate(e.target.value)} />
+                <Input type="time" className="h-8 text-xs w-24" value={reminderTime} onChange={e => setReminderTime(e.target.value)} />
+                <Button size="sm" className="h-8 gap-1" onClick={handleAddReminder}>
+                  <Plus className="w-3 h-3" /> Add
                 </Button>
-              ))}
-            </div>
+              </div>
+            )}
           </section>
 
           <Separator />
 
-          <section className="space-y-2">
-            <h3 className="text-sm font-semibold text-foreground">Notes</h3>
-            <Textarea placeholder="Add notes..." value={notes} onChange={e => setNotes(e.target.value)} rows={3} />
-            <Button size="sm" onClick={handleSaveNotes}>Save Notes</Button>
-          </section>
-
-          <Separator />
-
-          <section className="space-y-2">
-            <h3 className="text-sm font-semibold text-foreground">Reminder</h3>
-            <div className="flex gap-2">
-              <Input type="date" className="h-9" value={reminderDate} onChange={e => setReminderDate(e.target.value)} />
-              <Button size="sm" className="h-9" onClick={handleSetReminder}>Set</Button>
-            </div>
-          </section>
-
-          <Separator />
-
+          {/* Comments — always available */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <MessageSquare className="w-4 h-4" /> Comments
@@ -181,10 +249,10 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
               ))}
             </div>
             <div className="flex gap-2">
-              <Input placeholder="Add a comment..." value={comment} onChange={e => setComment(e.target.value)} className="h-9"
+              <Input placeholder="Add a comment..." value={comment} onChange={e => setComment(e.target.value)} className="h-8 text-xs"
                 onKeyDown={e => e.key === 'Enter' && handleAddComment()} />
-              <Button size="icon" className="h-9 w-9" onClick={handleAddComment}>
-                <Send className="w-4 h-4" />
+              <Button size="icon" className="h-8 w-8" onClick={handleAddComment}>
+                <Send className="w-3.5 h-3.5" />
               </Button>
             </div>
           </section>

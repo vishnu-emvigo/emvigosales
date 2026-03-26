@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Lead, Comment, SalesRep, LeadStatus } from '@/types/leads';
+import { Lead, Comment, SalesRep, LeadStatus, Reminder } from '@/types/leads';
 import { INITIAL_LEADS, INITIAL_REPS, INITIAL_COMMENTS } from '@/data/mockData';
 
 interface LeadsContextType {
@@ -14,6 +14,8 @@ interface LeadsContextType {
   toggleRepLeave: (repId: string) => void;
   reassignLeadsFromRep: (repId: string, targetRepId: string | 'admin' | 'queue') => void;
   addLeads: (newLeads: Lead[]) => void;
+  addReminder: (leadId: string, datetime: string) => void;
+  removeReminder: (leadId: string, reminderId: string) => void;
 }
 
 const LeadsContext = createContext<LeadsContextType | null>(null);
@@ -94,10 +96,24 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setLeads(prev => [...prev, ...newLeads]);
   }, []);
 
+  const addReminder = useCallback((leadId: string, datetime: string) => {
+    const reminder: Reminder = { id: `rem-${Date.now()}`, datetime };
+    setLeads(prev => prev.map(l =>
+      l.id === leadId ? { ...l, reminders: [...l.reminders, reminder] } : l
+    ));
+  }, []);
+
+  const removeReminder = useCallback((leadId: string, reminderId: string) => {
+    setLeads(prev => prev.map(l =>
+      l.id === leadId ? { ...l, reminders: l.reminders.filter(r => r.id !== reminderId) } : l
+    ));
+  }, []);
+
   return (
     <LeadsContext.Provider value={{
       leads, reps, comments, updateLead, assignLeads, autoDistribute,
       addComment, toggleRepLeave, reassignLeadsFromRep, addLeads,
+      addReminder, removeReminder,
     }}>
       {children}
     </LeadsContext.Provider>
