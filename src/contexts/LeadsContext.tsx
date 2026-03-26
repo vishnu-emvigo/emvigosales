@@ -37,9 +37,10 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const assignLeads = useCallback((leadIds: string[], repName: string, repLinkedin: string) => {
+    const now = new Date().toISOString();
     setLeads(prev => prev.map(l =>
       leadIds.includes(l.id)
-        ? { ...l, status: 'assigned' as LeadStatus, assigned_to: repName, linkedin_profile_used: repLinkedin }
+        ? { ...l, status: 'assigned' as LeadStatus, assigned_to: repName, linkedin_profile_used: repLinkedin, assigned_at: now, last_action_at: now }
         : l
     ));
   }, []);
