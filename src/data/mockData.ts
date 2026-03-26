@@ -32,7 +32,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_a: 'Hi Ali, your work at MediShout in healthcare operations is truly impactful. We specialise in helping healthtech companies expand their B2B outreach - let us connect.',
     message_b: 'Hello Ali, impressive traction with MediShout across NHS trusts! We have helped similar healthtech companies accelerate growth. Interested in a brief conversation?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
