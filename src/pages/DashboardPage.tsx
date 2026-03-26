@@ -91,10 +91,7 @@ const DashboardPage = () => {
           <KPICard title="🟢 Green Leads" value={greenCount} icon={<CheckCircle2 className="w-5 h-5" />} href="/leads?priority=green" tooltip="Low urgency leads" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <StatusFunnel leads={leads} />
-          <PriorityDistribution leads={leads} />
-        </div>
+        <StatusFunnel leads={leads} />
 
         <RepPerformanceTable leads={leads} reps={reps} />
 
