@@ -33,7 +33,7 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
     const errs: Record<string, string> = {};
     if (!status) errs.status = 'Status is required';
     if (!messageType) errs.messageType = 'Message type must be selected';
-    if (!comment.trim()) errs.comment = 'Comment is required';
+    if (!connectNote.trim()) errs.connectNote = 'Connect note is required';
     if (needsPriority && !priority) errs.priority = 'Priority is required for Request Accepted';
     setErrors(errs);
     return Object.keys(errs).length === 0;
