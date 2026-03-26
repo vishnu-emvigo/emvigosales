@@ -53,7 +53,7 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
 
   const handleClose = () => {
     setErrors({});
-    setComment('');
+    setConnectNote('');
     onClose();
   };
 
