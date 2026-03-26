@@ -7,6 +7,8 @@ interface LeadsContextType {
   leads: Lead[];
   reps: SalesRep[];
   comments: Comment[];
+  globalFollowUpHours: number | null;
+  setGlobalFollowUpHours: (hours: number | null) => void;
   updateLead: (id: string, updates: Partial<Lead>) => void;
   assignLeads: (leadIds: string[], repName: string, repLinkedin: string) => void;
   autoDistribute: () => void;
@@ -28,15 +30,17 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
   const [reps, setReps] = useState<SalesRep[]>(INITIAL_REPS);
   const [comments, setComments] = useState<Comment[]>(INITIAL_COMMENTS);
+  const [globalFollowUpHours, setGlobalFollowUpHours] = useState<number | null>(null);
 
   const updateLead = useCallback((id: string, updates: Partial<Lead>) => {
     setLeads(prev => prev.map(l => l.id === id ? { ...l, ...updates } : l));
   }, []);
 
   const assignLeads = useCallback((leadIds: string[], repName: string, repLinkedin: string) => {
+    const now = new Date().toISOString();
     setLeads(prev => prev.map(l =>
       leadIds.includes(l.id)
-        ? { ...l, status: 'assigned' as LeadStatus, assigned_to: repName, linkedin_profile_used: repLinkedin }
+        ? { ...l, status: 'assigned' as LeadStatus, assigned_to: repName, linkedin_profile_used: repLinkedin, assigned_at: now, last_action_at: now }
         : l
     ));
   }, []);
@@ -52,7 +56,8 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const idx = ids.indexOf(l.id);
         if (idx === -1) return l;
         const rep = activeReps[idx % activeReps.length];
-        return { ...l, status: 'assigned' as LeadStatus, assigned_to: rep.name, linkedin_profile_used: rep.linkedin_profile };
+        const now = new Date().toISOString();
+        return { ...l, status: 'assigned' as LeadStatus, assigned_to: rep.name, linkedin_profile_used: rep.linkedin_profile, assigned_at: now, last_action_at: now };
       });
     });
   }, [reps]);
@@ -167,6 +172,7 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         ...l,
         status,
         selected_message: messageType,
+        last_action_at: new Date().toISOString(),
         ...(priority ? { priority_color: priority } : {}),
       } : l
     ));
@@ -186,7 +192,8 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <LeadsContext.Provider value={{
-      leads, reps, comments, updateLead, assignLeads, autoDistribute,
+      leads, reps, comments, globalFollowUpHours, setGlobalFollowUpHours,
+      updateLead, assignLeads, autoDistribute,
       addComment, toggleRepLeave, reassignLeadsFromRep, addLeads,
       addReminder, removeReminder, reassignLead, setPriority,
       addConnectNote, updateLeadStatus,
