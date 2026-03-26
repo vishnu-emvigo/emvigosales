@@ -10,9 +10,9 @@ const DOT_STYLES: Record<PriorityColor, string> = {
 };
 
 const LABELS: Record<PriorityColor, string> = {
-  red: 'High Priority',
-  amber: 'Medium Priority',
-  green: 'Low Priority',
+  red: 'Red',
+  amber: 'Amber',
+  green: 'Green',
   none: 'No Priority',
 };
 

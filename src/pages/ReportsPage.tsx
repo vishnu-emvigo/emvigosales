@@ -14,7 +14,7 @@ const ReportsPage = () => {
 
   const msgA = leads.filter(l => l.selected_message === 'A').length;
   const msgB = leads.filter(l => l.selected_message === 'B').length;
-  const responseRate = leads.length ? Math.round(((statusCounts['converted_to_customer'] || 0) / leads.length) * 100) : 0;
+  const responseRate = leads.length ? Math.round(((statusCounts['response_back'] || 0) / leads.length) * 100) : 0;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
@@ -54,7 +54,7 @@ const ReportsPage = () => {
           <div className="space-y-3">
             {reps.map(rep => {
               const repLeads = leads.filter(l => l.assigned_to === rep.name);
-              const responded = repLeads.filter(l => l.status === 'converted_to_customer').length;
+              const responded = repLeads.filter(l => l.status === 'response_back').length;
               const rate = repLeads.length ? Math.round((responded / repLeads.length) * 100) : 0;
               return (
                 <div key={rep.id} className="flex items-center justify-between text-sm">

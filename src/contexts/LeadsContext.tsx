@@ -116,7 +116,6 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const lead = prev.find(l => l.id === leadId);
       if (!lead) return prev;
       const oldAssignee = lead.assigned_to || 'Unassigned';
-      // Add system comment
       const systemComment: Comment = {
         id: `c-sys-${Date.now()}`,
         lead_id: leadId,
@@ -135,7 +134,7 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const setPriority = useCallback((leadId: string, priority: PriorityColor, userName: string) => {
     setLeads(prev => prev.map(l => l.id === leadId ? { ...l, priority_color: priority } : l));
-    const labels: Record<PriorityColor, string> = { red: 'Red (High)', amber: 'Amber (Medium)', green: 'Green (Low)', none: 'None' };
+    const labels: Record<PriorityColor, string> = { red: 'Red', amber: 'Amber', green: 'Green', none: 'None' };
     const systemComment: Comment = {
       id: `c-sys-${Date.now()}`,
       lead_id: leadId,
