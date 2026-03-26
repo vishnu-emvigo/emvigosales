@@ -1,5 +1,14 @@
 export type LeadStatus = 'not_assigned' | 'assigned' | 'mail_sent' | 'connection_sent' | 'request_accepted' | 'response_back';
 
+export type PriorityColor = 'red' | 'amber' | 'green' | 'none';
+
+export const PRIORITY_LABELS: Record<PriorityColor, string> = {
+  red: 'High Priority',
+  amber: 'Medium Priority',
+  green: 'Low Priority',
+  none: 'No Priority',
+};
+
 export interface Reminder {
   id: string;
   datetime: string; // ISO string e.g. "2026-03-26T10:00"
@@ -24,6 +33,7 @@ export interface Lead {
   reminders: Reminder[];
   batch_id: string;
   upload_date: string;
+  priority_color: PriorityColor;
 }
 
 export interface Comment {
