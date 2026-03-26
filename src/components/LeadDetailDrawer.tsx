@@ -140,31 +140,48 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
             <Separator />
 
-            {/* Priority — only editable if assigned */}
+            {/* Priority — only editable if assigned AND status is request_accepted or response_back */}
             <section className="space-y-2">
               <h3 className="text-sm font-semibold text-foreground">
                 Priority {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
               </h3>
-              {isAssigned ? (
-                <div className="flex items-center gap-3">
-                  {(['red', 'amber', 'green', 'none'] as PriorityColor[]).map(p => {
-                    const labels: Record<PriorityColor, string> = { red: '🔴 Red', amber: '🟠 Amber', green: '🟢 Green', none: 'None' };
-                    return (
-                      <Button
-                        key={p}
-                        size="sm"
-                        variant={lead.priority_color === p ? 'default' : 'outline'}
-                        className="h-7 text-xs"
-                        onClick={() => setPriority(lead.id, p, user?.name || '')}
-                      >
-                        {labels[p]}
-                      </Button>
-                    );
-                  })}
-                </div>
-              ) : (
-                <PriorityDot priority={lead.priority_color} size="md" />
-              )}
+              {(() => {
+                const colorEligible = lead.status === 'request_accepted' || lead.status === 'response_back';
+                if (isAssigned && colorEligible) {
+                  return (
+                    <div className="flex items-center gap-3">
+                      {(['red', 'amber', 'green'] as PriorityColor[]).map(p => {
+                        const labels: Record<PriorityColor, string> = { red: '🔴 Red', amber: '🟠 Amber', green: '🟢 Green', none: 'None' };
+                        return (
+                          <Button
+                            key={p}
+                            size="sm"
+                            variant={lead.priority_color === p ? 'default' : 'outline'}
+                            className="h-7 text-xs"
+                            onClick={() => setPriority(lead.id, p, user?.name || '')}
+                          >
+                            {labels[p]}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+                if (!colorEligible) {
+                  return (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="inline-flex items-center gap-1 text-xs text-muted-foreground cursor-default">
+                          <PriorityDot priority={lead.priority_color} size="md" />
+                          <span className="ml-1 italic">Available after Request Accepted</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Color can only be selected after Request Accepted stage</TooltipContent>
+                    </Tooltip>
+                  );
+                }
+                return <PriorityDot priority={lead.priority_color} size="md" />;
+              })()}
             </section>
 
             <Separator />
