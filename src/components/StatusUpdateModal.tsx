@@ -15,7 +15,7 @@ interface StatusUpdateModalProps {
   onSubmit: (data: {
     status: LeadStatus;
     messageType: 'A' | 'B';
-    comment: string;
+    connectNote: string;
     priority?: PriorityColor;
   }) => void;
 }
@@ -23,7 +23,7 @@ interface StatusUpdateModalProps {
 const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalProps) => {
   const [status, setStatus] = useState<LeadStatus | ''>(lead.status);
   const [messageType, setMessageType] = useState<'A' | 'B' | ''>(lead.selected_message || '');
-  const [comment, setComment] = useState('');
+  const [connectNote, setConnectNote] = useState('');
   const [priority, setPriority] = useState<PriorityColor | ''>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -33,7 +33,7 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
     const errs: Record<string, string> = {};
     if (!status) errs.status = 'Status is required';
     if (!messageType) errs.messageType = 'Message type must be selected';
-    if (!comment.trim()) errs.comment = 'Comment is required';
+    if (!connectNote.trim()) errs.connectNote = 'Connect note is required';
     if (needsPriority && !priority) errs.priority = 'Priority is required for Request Accepted';
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -44,16 +44,16 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
     onSubmit({
       status: status as LeadStatus,
       messageType: messageType as 'A' | 'B',
-      comment: comment.trim(),
+      connectNote: connectNote.trim(),
       priority: needsPriority ? (priority as PriorityColor) : undefined,
     });
-    setComment('');
+    setConnectNote('');
     setErrors({});
   };
 
   const handleClose = () => {
     setErrors({});
-    setComment('');
+    setConnectNote('');
     onClose();
   };
 
@@ -128,17 +128,17 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
             </div>
           )}
 
-          {/* Comment */}
+          {/* Connect Note */}
           <div className="space-y-1.5">
-            <Label className="text-sm font-medium">Comment *</Label>
+            <Label className="text-sm font-medium">Connect Note *</Label>
             <Textarea
-              placeholder="Add a comment about this status change..."
-              value={comment}
-              onChange={e => { setComment(e.target.value); setErrors(er => ({ ...er, comment: '' })); }}
+              placeholder="Add a note about this status change..."
+              value={connectNote}
+              onChange={e => { setConnectNote(e.target.value); setErrors(er => ({ ...er, connectNote: '' })); }}
               rows={3}
               className="text-sm"
             />
-            {errors.comment && <p className="text-xs text-destructive">{errors.comment}</p>}
+            {errors.connectNote && <p className="text-xs text-destructive">{errors.connectNote}</p>}
           </div>
         </div>
         <DialogFooter>

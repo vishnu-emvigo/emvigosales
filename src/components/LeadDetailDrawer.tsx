@@ -43,10 +43,11 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
   const canReassign = user?.role === 'admin' || user?.role === 'sales_admin';
   const leadComments = comments.filter(c => c.lead_id === lead.id);
 
-  const handleStatusSubmit = (data: { status: LeadStatus; messageType: 'A' | 'B'; comment: string; priority?: PriorityColor }) => {
+  const handleStatusSubmit = (data: { status: LeadStatus; messageType: 'A' | 'B'; connectNote: string; priority?: PriorityColor }) => {
     if (!user) return;
     const roleLabel = user.role === 'admin' ? 'Admin' : user.role === 'sales_admin' ? 'Sales Admin' : 'Sales Rep';
-    updateLeadStatus(lead.id, data.status, data.messageType, data.comment, user.name, roleLabel, data.priority);
+    addConnectNote(lead.id, data.connectNote, user.name);
+    updateLeadStatus(lead.id, data.status, data.messageType, user.name, roleLabel, data.priority);
     if (data.priority) {
       const labels: Record<PriorityColor, string> = { red: 'Red', amber: 'Amber', green: 'Green', none: 'None' };
       toast.success(`Status updated to ${STATUS_LABELS[data.status]} — Priority: ${labels[data.priority]}`);

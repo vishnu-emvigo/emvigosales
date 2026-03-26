@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Lead, Comment, SalesRep, LeadStatus, Reminder, PriorityColor, ConnectNote } from '@/types/leads';
+import { Lead, Comment, SalesRep, LeadStatus, Reminder, PriorityColor, ConnectNote, STATUS_LABELS } from '@/types/leads';
 import { INITIAL_LEADS, INITIAL_REPS, INITIAL_COMMENTS } from '@/data/mockData';
 
 interface LeadsContextType {
@@ -19,7 +19,7 @@ interface LeadsContextType {
   reassignLead: (leadId: string, newAssignee: string, newLinkedin: string, reason: string, performedBy: string) => void;
   setPriority: (leadId: string, priority: PriorityColor, userName: string) => void;
   addConnectNote: (leadId: string, content: string, userName: string) => void;
-  updateLeadStatus: (leadId: string, status: LeadStatus, messageType: 'A' | 'B', comment: string, userName: string, userRole: string, priority?: PriorityColor) => void;
+  updateLeadStatus: (leadId: string, status: LeadStatus, messageType: 'A' | 'B', userName: string, userRole: string, priority?: PriorityColor) => void;
 }
 
 const LeadsContext = createContext<LeadsContextType | null>(null);
@@ -161,7 +161,7 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     ));
   }, []);
 
-  const updateLeadStatus = useCallback((leadId: string, status: LeadStatus, messageType: 'A' | 'B', comment: string, userName: string, userRole: string, priority?: PriorityColor) => {
+  const updateLeadStatus = useCallback((leadId: string, status: LeadStatus, messageType: 'A' | 'B', userName: string, userRole: string, priority?: PriorityColor) => {
     setLeads(prev => prev.map(l =>
       l.id === leadId ? {
         ...l,
@@ -170,16 +170,18 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         ...(priority ? { priority_color: priority } : {}),
       } : l
     ));
-    const newComment: Comment = {
-      id: `c-${Date.now()}`,
+    // Add a system comment logging the status change
+    const priorityLabel = priority ? ` — Priority: ${priority}` : '';
+    const systemComment: Comment = {
+      id: `c-sys-${Date.now()}`,
       lead_id: leadId,
-      user_id: userName,
-      user_name: userName,
-      user_role: userRole,
-      content: comment,
+      user_id: 'system',
+      user_name: 'System',
+      user_role: 'System',
+      content: `Status updated to ${STATUS_LABELS[status]} (Message ${messageType}) by ${userName}${priorityLabel}`,
       created_at: new Date().toISOString(),
     };
-    setComments(prev => [...prev, newComment]);
+    setComments(prev => [...prev, systemComment]);
   }, []);
 
   return (
