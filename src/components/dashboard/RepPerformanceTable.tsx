@@ -15,8 +15,8 @@ const RepPerformanceTable = ({ leads, reps, compact }: Props) => {
 
   const repData = reps.map(rep => {
     const repLeads = leads.filter(l => l.assigned_to === rep.name);
-    const contacted = repLeads.filter(l => ['mail_sent', 'connection_sent', 'request_accepted', 'response_back'].includes(l.status)).length;
-    const responses = repLeads.filter(l => l.status === 'response_back').length;
+    const contacted = repLeads.filter(l => ['mail_sent', 'connection_sent', 'request_accepted', 'response_back', 'meeting', 'converted_to_customer'].includes(l.status)).length;
+    const responses = repLeads.filter(l => l.status === 'converted_to_customer').length;
     const pending = repLeads.filter(l => l.status === 'assigned').length;
     const conversionPct = repLeads.length > 0 ? Math.round((responses / repLeads.length) * 100) : 0;
     // Simulated: overdue = assigned but no status change (simplified — assigned leads count as potentially overdue)

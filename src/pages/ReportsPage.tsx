@@ -54,7 +54,7 @@ const ReportsPage = () => {
           <div className="space-y-3">
             {reps.map(rep => {
               const repLeads = leads.filter(l => l.assigned_to === rep.name);
-              const responded = repLeads.filter(l => l.status === 'response_back').length;
+              const responded = repLeads.filter(l => l.status === 'converted_to_customer').length;
               const rate = repLeads.length ? Math.round((responded / repLeads.length) * 100) : 0;
               return (
                 <div key={rep.id} className="flex items-center justify-between text-sm">
