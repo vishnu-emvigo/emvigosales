@@ -23,7 +23,7 @@ interface StatusUpdateModalProps {
 const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalProps) => {
   const [status, setStatus] = useState<LeadStatus | ''>(lead.status);
   const [messageType, setMessageType] = useState<'A' | 'B' | ''>(lead.selected_message || '');
-  const [comment, setComment] = useState('');
+  const [connectNote, setConnectNote] = useState('');
   const [priority, setPriority] = useState<PriorityColor | ''>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
