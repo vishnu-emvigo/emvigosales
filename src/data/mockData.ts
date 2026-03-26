@@ -45,7 +45,7 @@ export const INITIAL_LEADS: Lead[] = [
     person_summary: 'Ioannis Chronakis is a senior leader at Deontics with extensive experience in health informatics and clinical decision systems.',
     message_a: 'Hi Ioannis, I noticed your work at Deontics in clinical decision support - fascinating space. We help health-AI companies like yours build strong sales pipelines. Would love to connect.',
     message_b: 'Hello Ioannis, Deontics is doing groundbreaking work in personalised care. We have helped similar companies achieve 2x outreach efficiency. Fancy a quick call?',
-    status: 'not_assigned', assigned_to: null, selected_message: null,
+    status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null, selected_message: null,
     linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
