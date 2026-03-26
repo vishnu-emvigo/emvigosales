@@ -192,7 +192,8 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <LeadsContext.Provider value={{
-      leads, reps, comments, updateLead, assignLeads, autoDistribute,
+      leads, reps, comments, globalFollowUpHours, setGlobalFollowUpHours,
+      updateLead, assignLeads, autoDistribute,
       addComment, toggleRepLeave, reassignLeadsFromRep, addLeads,
       addReminder, removeReminder, reassignLead, setPriority,
       addConnectNote, updateLeadStatus,
