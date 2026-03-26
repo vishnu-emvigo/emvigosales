@@ -19,7 +19,7 @@ interface LeadsContextType {
   reassignLead: (leadId: string, newAssignee: string, newLinkedin: string, reason: string, performedBy: string) => void;
   setPriority: (leadId: string, priority: PriorityColor, userName: string) => void;
   addConnectNote: (leadId: string, content: string, userName: string) => void;
-  updateLeadStatus: (leadId: string, status: LeadStatus, messageType: 'A' | 'B', comment: string, userName: string, userRole: string, priority?: PriorityColor) => void;
+  updateLeadStatus: (leadId: string, status: LeadStatus, messageType: 'A' | 'B', userName: string, userRole: string, priority?: PriorityColor) => void;
 }
 
 const LeadsContext = createContext<LeadsContextType | null>(null);
