@@ -18,7 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { title: 'All Leads', url: '/leads', icon: ClipboardList, roles: ['admin', 'sales_admin', 'sales_rep'] },
   { title: 'My Leads', url: '/my-leads', icon: Users, roles: ['admin', 'sales_admin', 'sales_rep'] },
   { title: 'Unassigned', url: '/unassigned', icon: UserPlus, roles: ['admin', 'sales_admin', 'sales_rep'] },
-  { title: 'Assignment', url: '/assignment', icon: UsersRound, roles: ['admin', 'sales_admin'] },
+  
   { title: 'Team', url: '/team', icon: Users, roles: ['admin', 'sales_admin'] },
   { title: 'Reminders', url: '/reminders', icon: Bell, roles: ['admin', 'sales_admin', 'sales_rep'] },
   { title: 'Data Upload', url: '/upload', icon: Upload, roles: ['admin'] },
