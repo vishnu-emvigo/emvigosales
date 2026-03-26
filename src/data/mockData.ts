@@ -60,7 +60,7 @@ export const INITIAL_LEADS: Lead[] = [
     message_a: 'Hi Jonathan, your work at AROai combining AI with property analytics is really compelling. We help proptech companies like yours accelerate B2B growth - let us connect.',
     message_b: 'Hello Jonathan, exciting developments at AROai! We have helped similar proptech companies build robust sales pipelines. Would you be open to a brief chat?',
     status: 'not_assigned', assigned_to: null, selected_message: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
