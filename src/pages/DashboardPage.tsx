@@ -8,7 +8,9 @@ import RepPerformanceTable from '@/components/dashboard/RepPerformanceTable';
 import RemindersPanel from '@/components/dashboard/RemindersPanel';
 import InactivityAlerts from '@/components/dashboard/InactivityAlerts';
 import CommentsActivity from '@/components/dashboard/CommentsActivity';
-import { Users, UserX, Activity, CheckCircle2, TrendingUp, Upload, ClipboardList, AlertTriangle, BarChart3 } from 'lucide-react';
+import PriorityDistribution from '@/components/dashboard/PriorityDistribution';
+import HighPriorityAlerts from '@/components/dashboard/HighPriorityAlerts';
+import { Users, UserX, Activity, CheckCircle2, TrendingUp, Upload, ClipboardList, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const DashboardPage = () => {
@@ -17,7 +19,6 @@ const DashboardPage = () => {
 
   const isRep = user?.role === 'sales_rep';
   const isAdmin = user?.role === 'admin';
-  const isSalesAdmin = user?.role === 'sales_admin';
 
   const today = new Date().toISOString().split('T')[0];
   const uploadedToday = leads.filter(l => l.upload_date === today).length;
@@ -47,6 +48,7 @@ const DashboardPage = () => {
           />
         </div>
         <StatusMiniCards leads={myLeads} />
+        <PriorityDistribution leads={myLeads} title="My Priority View" />
         <RemindersPanel leads={myLeads} userName={user?.name} />
       </motion.div>
     );
@@ -58,7 +60,6 @@ const DashboardPage = () => {
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
         <h1 className="text-xl font-semibold text-foreground">Admin Dashboard</h1>
 
-        {/* Section 1: Global KPIs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <KPICard title="Total Leads" value={leads.length} subtitle={`+${uploadedToday} today`} icon={<Users className="w-5 h-5" />} href="/leads" tooltip="Click to view all leads" />
           <KPICard title="Unassigned" value={unassigned} icon={<UserX className="w-5 h-5" />} href="/unassigned" alert={unassigned > 3} tooltip="Leads needing assignment" />
@@ -67,20 +68,22 @@ const DashboardPage = () => {
           <KPICard title="Conversion Rate" value={`${conversionRate}%`} icon={<TrendingUp className="w-5 h-5" />} tooltip="Response back / total assigned" />
         </div>
 
-        {/* Section 2 + 3: Funnel + Rep Performance */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <StatusFunnel leads={leads} />
-          <RepPerformanceTable leads={leads} reps={reps} />
+          <PriorityDistribution leads={leads} />
         </div>
 
-        {/* Section 4 + 5: Reminders + Inactivity */}
+        <RepPerformanceTable leads={leads} reps={reps} />
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <RemindersPanel leads={leads} />
-          <InactivityAlerts leads={leads} />
+          <HighPriorityAlerts leads={leads} />
         </div>
 
-        {/* Section 6: Comments */}
-        <CommentsActivity comments={comments} leads={leads} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <InactivityAlerts leads={leads} />
+          <CommentsActivity comments={comments} leads={leads} />
+        </div>
       </motion.div>
     );
   }
@@ -90,7 +93,6 @@ const DashboardPage = () => {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       <h1 className="text-xl font-semibold text-foreground">Sales Admin Dashboard</h1>
 
-      {/* Section 1: Quick Action Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard title="Unassigned Leads" value={unassigned} icon={<UserX className="w-5 h-5" />} href="/unassigned" alert={unassigned > 0} tooltip="Assign to reps or yourself" />
         <KPICard title="Assigned to Me" value={myLeads.length} icon={<ClipboardList className="w-5 h-5" />} href="/my-leads" tooltip="Leads you're working on" />
@@ -98,16 +100,18 @@ const DashboardPage = () => {
         <KPICard title="Pending Actions" value={myPending} icon={<AlertTriangle className="w-5 h-5" />} alert={myPending > 0} tooltip="Assigned but not yet progressed" />
       </div>
 
-      {/* Section 2: Status Overview */}
       <StatusMiniCards leads={leads} />
 
-      {/* Section 3 + 4: Team Performance + Reminders */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PriorityDistribution leads={leads} title="Priority Summary" />
+        <HighPriorityAlerts leads={leads} />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RepPerformanceTable leads={leads} reps={reps} compact />
         <RemindersPanel leads={leads} userName={user?.name} />
       </div>
 
-      {/* Section 5 + 6: Inactivity + Comments */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <InactivityAlerts leads={leads} />
         <CommentsActivity comments={comments} leads={leads} />
