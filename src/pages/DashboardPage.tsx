@@ -129,10 +129,7 @@ const DashboardPage = () => {
 
       <StatusMiniCards leads={leads} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <PriorityDistribution leads={leads} title="Priority Summary" />
-        <HighPriorityAlerts leads={leads} />
-      </div>
+      <HighPriorityAlerts leads={leads} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RepPerformanceTable leads={leads} reps={reps} compact />
