@@ -18,6 +18,7 @@ const UnassignedLeadsPage = () => {
 
   const unassigned = leads.filter(l => l.status === 'not_assigned');
   const isRep = user?.role === 'sales_rep';
+  const isAdmin = user?.role === 'admin';
   const activeReps = reps.filter(r => r.status === 'active');
   const currentLead = selectedLead ? leads.find(l => l.id === selectedLead.id) || null : null;
 
