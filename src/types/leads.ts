@@ -30,6 +30,7 @@ export interface Lead {
   location: string;
   company_profile: string;
   person_summary: string;
+  inmail_subject: string;
   message_a: string;
   message_b: string;
   status: LeadStatus;
