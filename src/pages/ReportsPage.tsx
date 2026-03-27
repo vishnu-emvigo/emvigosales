@@ -90,17 +90,7 @@ const ReportsPage = () => {
     arr.includes(item) ? arr.filter(i => i !== item) : [...arr, item];
 
   const handleDownloadPdf = () => {
-    generateReportPdf(filtered, leads, reps, {
-      dateFrom: dateFrom?.toISOString().split('T')[0],
-      dateTo: dateTo?.toISOString().split('T')[0],
-      statuses: selectedStatuses,
-      assignedUsers: selectedUsers,
-      messageType,
-      priorities: selectedPriorities,
-      batchIds: selectedBatches,
-      regions: selectedRegions,
-    });
-    toast.success('PDF report downloaded');
+    toast.info('PDF export feature is coming soon.');
   };
 
   return (
