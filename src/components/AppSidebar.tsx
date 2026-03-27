@@ -16,7 +16,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'sales_admin', 'sales_rep'] },
   { title: 'All Leads', url: '/leads', icon: ClipboardList, roles: ['admin', 'sales_admin', 'sales_rep'] },
-  { title: 'My Leads', url: '/my-leads', icon: Users, roles: ['admin', 'sales_admin', 'sales_rep'] },
+  { title: 'My Leads', url: '/my-leads', icon: Users, roles: ['sales_admin', 'sales_rep'] },
   { title: 'Unassigned', url: '/unassigned', icon: UserPlus, roles: ['admin', 'sales_admin', 'sales_rep'] },
   
   { title: 'Team', url: '/team', icon: Users, roles: ['sales_admin'] },

@@ -22,8 +22,11 @@ const ReassignModal = ({ lead, open, onClose }: ReassignModalProps) => {
 
   if (!lead || !user) return null;
 
+  const isAdmin = user.role === 'admin';
+
   const allAssignees = [
-    { name: 'Admin User', linkedin: '' },
+    // Admin cannot assign to themselves
+    ...(!isAdmin ? [{ name: 'Admin User', linkedin: '' }] : []),
     { name: 'Sarah Manager', linkedin: '' },
     ...reps.filter(r => r.status === 'active').map(r => ({ name: r.name, linkedin: r.linkedin_profile })),
   ].filter(a => a.name !== lead.assigned_to);
