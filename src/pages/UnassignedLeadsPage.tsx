@@ -18,6 +18,7 @@ const UnassignedLeadsPage = () => {
 
   const unassigned = leads.filter(l => l.status === 'not_assigned');
   const isRep = user?.role === 'sales_rep';
+  const isAdmin = user?.role === 'admin';
   const activeReps = reps.filter(r => r.status === 'active');
   const currentLead = selectedLead ? leads.find(l => l.id === selectedLead.id) || null : null;
 
@@ -62,9 +63,11 @@ const UnassignedLeadsPage = () => {
                 <Button size="sm" className="h-8 text-xs" onClick={handleAssignToRep} disabled={selectedIds.length === 0 || !assignTo}>
                   Assign ({selectedIds.length})
                 </Button>
-                <Button size="sm" variant="secondary" className="h-8 text-xs" onClick={handleAssignToMe} disabled={selectedIds.length === 0}>
-                  Assign to Me
-                </Button>
+                {!isAdmin && (
+                  <Button size="sm" variant="secondary" className="h-8 text-xs" onClick={handleAssignToMe} disabled={selectedIds.length === 0}>
+                    Assign to Me
+                  </Button>
+                )}
               </>
             )}
             {isRep && (
