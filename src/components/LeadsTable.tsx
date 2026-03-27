@@ -266,7 +266,7 @@ const LeadsTable = ({
                       })()}
                     </td>
                     {/* Assigned User Name */}
-                    <td className="px-3 py-1.5 text-muted-foreground truncate">{lead.assigned_to || 'Unassigned'}</td>
+                    <td className="px-3 py-1.5 text-muted-foreground whitespace-nowrap">{lead.assigned_to || 'Unassigned'}</td>
                   </tr>
                 );
               })}
