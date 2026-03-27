@@ -17,7 +17,7 @@ const MyLeadsPage = () => {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
       <h1 className="text-xl font-semibold text-foreground">My Leads</h1>
       <p className="text-sm text-muted-foreground">Leads assigned to you — full control over status, notes, and reminders.</p>
-      <LeadsTable leads={myLeads} onLeadClick={setSelectedLead} showMessages />
+      <LeadsTable leads={myLeads} onLeadClick={setSelectedLead} />
       <LeadDetailDrawer lead={currentLead} open={!!currentLead} onClose={() => setSelectedLead(null)} />
     </motion.div>
   );

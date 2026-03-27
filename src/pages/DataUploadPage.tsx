@@ -45,6 +45,7 @@ const DataUploadPage = () => {
             location: getVal('location') || '',
             company_profile: getVal('company profile') || getVal('company_profile') || '',
             person_summary: getVal('person summary') || getVal('person_summary') || '',
+            inmail_subject: getVal('inmail subject') || getVal('inmail_subject') || '',
             message_a: getVal('message a') || getVal('message_a') || '',
             message_b: getVal('message b') || getVal('message_b') || '',
             status: 'not_assigned' as const,
