@@ -199,7 +199,7 @@ const LeadsTable = ({
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-primary hover:underline whitespace-nowrap"
                       >
-                        <span className="truncate">{truncateUrl(lead.linkedin_url)}</span>
+                        <span>{truncateUrl(lead.linkedin_url)}</span>
                         <ExternalLink className="w-3 h-3 flex-shrink-0" />
                       </a>
                     </td>
