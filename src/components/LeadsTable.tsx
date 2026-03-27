@@ -103,7 +103,7 @@ const LeadsTable = ({
     onSelectionChange(selectedIds.includes(id) ? selectedIds.filter(i => i !== id) : [...selectedIds, id]);
   };
 
-  const colCount = (selectable ? 1 : 0) + 13;
+  const colCount = (selectable ? 1 : 0) + 14;
 
   return (
     <div className="space-y-3">
@@ -147,25 +147,26 @@ const LeadsTable = ({
       {/* Table */}
       <div className="border border-border rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-xs table-fixed" style={{ minWidth: '1600px' }}>
+          <table className="w-full text-xs" style={{ minWidth: '1800px' }}>
             <thead>
               <tr className="bg-muted/50 border-b border-border sticky top-0 z-10">
                 {selectable && (
-                  <th className="w-8 px-2 py-2"><Checkbox checked={allSelected} onCheckedChange={toggleAll} /></th>
+                  <th className="w-8 px-2 py-2 whitespace-nowrap"><Checkbox checked={allSelected} onCheckedChange={toggleAll} /></th>
                 )}
-                <th className="w-[120px] px-3 py-2 text-left font-medium text-muted-foreground">Full Name</th>
-                <th className="w-[110px] px-3 py-2 text-left font-medium text-muted-foreground">Company</th>
-                <th className="w-[120px] px-3 py-2 text-left font-medium text-muted-foreground">LinkedIn URL</th>
-                <th className="w-[80px] px-3 py-2 text-left font-medium text-muted-foreground">Region</th>
-                <th className="w-[160px] px-3 py-2 text-left font-medium text-muted-foreground">Company Profile</th>
-                <th className="w-[160px] px-3 py-2 text-left font-medium text-muted-foreground">Person Summary</th>
-                <th className="w-[120px] px-3 py-2 text-left font-medium text-muted-foreground">InMail Subject</th>
-                <th className="w-[160px] px-3 py-2 text-left font-medium text-muted-foreground">InMail Message A</th>
-                <th className="w-[160px] px-3 py-2 text-left font-medium text-muted-foreground">InMail Message B</th>
-                <th className="w-[140px] px-3 py-2 text-left font-medium text-muted-foreground">Connection Request Note</th>
-                <th className="w-[100px] px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap">InMail Message Type Sent</th>
-                <th className="w-[90px] px-3 py-2 text-left font-medium text-muted-foreground">Priority</th>
-                <th className="w-[110px] px-3 py-2 text-left font-medium text-muted-foreground">Assigned User Name</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap w-[50px]">#</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[120px]">Full Name</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[110px]">Company</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[140px]">LinkedIn URL</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[80px]">Region</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">Company Profile</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">Person Summary</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[130px]">InMail Subject</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">InMail Message A</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">InMail Message B</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[160px]">Connection Request Note</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[130px]">InMail Message Type Sent</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[90px]">Priority</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[120px]">Assigned User Name</th>
               </tr>
             </thead>
             <tbody>
@@ -184,24 +185,26 @@ const LeadsTable = ({
                         <Checkbox checked={selectedIds.includes(lead.id)} onCheckedChange={() => toggleOne(lead.id)} />
                       </td>
                     )}
+                    {/* Serial Number */}
+                    <td className="px-3 py-1.5 text-muted-foreground">{lead.sr_no}</td>
                     {/* Full Name */}
-                    <td className="px-3 py-1.5 font-medium text-foreground truncate">{lead.full_name}</td>
+                    <td className="px-3 py-1.5 font-medium text-foreground whitespace-nowrap">{lead.full_name}</td>
                     {/* Company */}
-                    <td className="px-3 py-1.5 text-foreground truncate">{lead.company}</td>
+                    <td className="px-3 py-1.5 text-foreground whitespace-nowrap">{lead.company}</td>
                     {/* LinkedIn URL */}
                     <td className="px-3 py-1.5" onClick={e => e.stopPropagation()}>
                       <a
                         href={lead.linkedin_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-primary hover:underline truncate"
+                        className="inline-flex items-center gap-1 text-primary hover:underline whitespace-nowrap"
                       >
-                        <span className="truncate">{truncateUrl(lead.linkedin_url)}</span>
+                        <span>{truncateUrl(lead.linkedin_url)}</span>
                         <ExternalLink className="w-3 h-3 flex-shrink-0" />
                       </a>
                     </td>
                     {/* Region */}
-                    <td className="px-3 py-1.5 text-muted-foreground truncate">{lead.location}</td>
+                    <td className="px-3 py-1.5 text-muted-foreground whitespace-nowrap">{lead.location}</td>
                     {/* Company Profile */}
                     <td className="px-3 py-1.5 text-muted-foreground">
                       <TruncatedCell text={lead.company_profile} />
@@ -263,7 +266,7 @@ const LeadsTable = ({
                       })()}
                     </td>
                     {/* Assigned User Name */}
-                    <td className="px-3 py-1.5 text-muted-foreground truncate">{lead.assigned_to || 'Unassigned'}</td>
+                    <td className="px-3 py-1.5 text-muted-foreground whitespace-nowrap">{lead.assigned_to || 'Unassigned'}</td>
                   </tr>
                 );
               })}
