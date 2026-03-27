@@ -126,7 +126,7 @@ const LeadsTable = ({
         <Select value={messageTypeFilter} onValueChange={v => { setMessageTypeFilter(v); setPage(1); }}>
           <SelectTrigger className="w-[150px] h-8 text-xs"><SelectValue placeholder="Message Type" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="all">Message Type</SelectItem>
             <SelectItem value="A">A</SelectItem>
             <SelectItem value="B">B</SelectItem>
           </SelectContent>
