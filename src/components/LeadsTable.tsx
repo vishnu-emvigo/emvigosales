@@ -103,7 +103,7 @@ const LeadsTable = ({
     onSelectionChange(selectedIds.includes(id) ? selectedIds.filter(i => i !== id) : [...selectedIds, id]);
   };
 
-  const colCount = (selectable ? 1 : 0) + 13;
+  const colCount = (selectable ? 1 : 0) + 14;
 
   return (
     <div className="space-y-3">
