@@ -147,25 +147,26 @@ const LeadsTable = ({
       {/* Table */}
       <div className="border border-border rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-xs table-fixed" style={{ minWidth: '1600px' }}>
+          <table className="w-full text-xs" style={{ minWidth: '1800px' }}>
             <thead>
               <tr className="bg-muted/50 border-b border-border sticky top-0 z-10">
                 {selectable && (
-                  <th className="w-8 px-2 py-2"><Checkbox checked={allSelected} onCheckedChange={toggleAll} /></th>
+                  <th className="w-8 px-2 py-2 whitespace-nowrap"><Checkbox checked={allSelected} onCheckedChange={toggleAll} /></th>
                 )}
-                <th className="w-[120px] px-3 py-2 text-left font-medium text-muted-foreground">Full Name</th>
-                <th className="w-[110px] px-3 py-2 text-left font-medium text-muted-foreground">Company</th>
-                <th className="w-[120px] px-3 py-2 text-left font-medium text-muted-foreground">LinkedIn URL</th>
-                <th className="w-[80px] px-3 py-2 text-left font-medium text-muted-foreground">Region</th>
-                <th className="w-[160px] px-3 py-2 text-left font-medium text-muted-foreground">Company Profile</th>
-                <th className="w-[160px] px-3 py-2 text-left font-medium text-muted-foreground">Person Summary</th>
-                <th className="w-[120px] px-3 py-2 text-left font-medium text-muted-foreground">InMail Subject</th>
-                <th className="w-[160px] px-3 py-2 text-left font-medium text-muted-foreground">InMail Message A</th>
-                <th className="w-[160px] px-3 py-2 text-left font-medium text-muted-foreground">InMail Message B</th>
-                <th className="w-[140px] px-3 py-2 text-left font-medium text-muted-foreground">Connection Request Note</th>
-                <th className="w-[100px] px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap">InMail Message Type Sent</th>
-                <th className="w-[90px] px-3 py-2 text-left font-medium text-muted-foreground">Priority</th>
-                <th className="w-[110px] px-3 py-2 text-left font-medium text-muted-foreground">Assigned User Name</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap w-[50px]">#</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[120px]">Full Name</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[110px]">Company</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[140px]">LinkedIn URL</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[80px]">Region</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">Company Profile</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">Person Summary</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[130px]">InMail Subject</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">InMail Message A</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">InMail Message B</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[160px]">Connection Request Note</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[130px]">InMail Message Type Sent</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[90px]">Priority</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[120px]">Assigned User Name</th>
               </tr>
             </thead>
             <tbody>
