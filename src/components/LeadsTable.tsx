@@ -204,7 +204,7 @@ const LeadsTable = ({
                       </a>
                     </td>
                     {/* Region */}
-                    <td className="px-3 py-1.5 text-muted-foreground truncate">{lead.location}</td>
+                    <td className="px-3 py-1.5 text-muted-foreground whitespace-nowrap">{lead.location}</td>
                     {/* Company Profile */}
                     <td className="px-3 py-1.5 text-muted-foreground">
                       <TruncatedCell text={lead.company_profile} />
