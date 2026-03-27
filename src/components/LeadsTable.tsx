@@ -185,8 +185,10 @@ const LeadsTable = ({
                         <Checkbox checked={selectedIds.includes(lead.id)} onCheckedChange={() => toggleOne(lead.id)} />
                       </td>
                     )}
+                    {/* Serial Number */}
+                    <td className="px-3 py-1.5 text-muted-foreground">{lead.sr_no}</td>
                     {/* Full Name */}
-                    <td className="px-3 py-1.5 font-medium text-foreground truncate">{lead.full_name}</td>
+                    <td className="px-3 py-1.5 font-medium text-foreground whitespace-nowrap">{lead.full_name}</td>
                     {/* Company */}
                     <td className="px-3 py-1.5 text-foreground truncate">{lead.company}</td>
                     {/* LinkedIn URL */}
