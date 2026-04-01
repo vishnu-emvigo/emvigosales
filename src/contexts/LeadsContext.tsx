@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Lead, Comment, SalesRep, LeadStatus, Reminder, PriorityColor, ConnectNote, STATUS_LABELS } from '@/types/leads';
+import { Lead, Comment, SalesRep, LeadStatus, Reminder, PriorityColor, STATUS_LABELS } from '@/types/leads';
 import { INITIAL_LEADS, INITIAL_REPS, INITIAL_COMMENTS } from '@/data/mockData';
 
 interface LeadsContextType {
@@ -20,7 +20,6 @@ interface LeadsContextType {
   removeReminder: (leadId: string, reminderId: string) => void;
   reassignLead: (leadId: string, newAssignee: string, newLinkedin: string, reason: string, performedBy: string) => void;
   setPriority: (leadId: string, priority: PriorityColor, userName: string) => void;
-  addConnectNote: (leadId: string, content: string, userName: string) => void;
   updateLeadStatus: (leadId: string, status: LeadStatus, userName: string, userRole: string, priority?: PriorityColor) => void;
 }
 
@@ -154,21 +153,6 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setComments(prev => [...prev, systemComment]);
   }, []);
 
-  const addConnectNote = useCallback((leadId: string, content: string, userName: string) => {
-    setLeads(prev => {
-      const lead = prev.find(l => l.id === leadId);
-      if (lead && lead.connect_notes.length > 0) return prev;
-      const note: ConnectNote = {
-        id: `cn-${Date.now()}`,
-        content,
-        user_name: userName,
-        created_at: new Date().toISOString(),
-      };
-      return prev.map(l =>
-        l.id === leadId ? { ...l, connect_notes: [...l.connect_notes, note] } : l
-      );
-    });
-  }, []);
 
   const updateLeadStatus = useCallback((leadId: string, status: LeadStatus, userName: string, userRole: string, priority?: PriorityColor) => {
     setLeads(prev => prev.map(l =>
@@ -198,7 +182,7 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       updateLead, assignLeads, autoDistribute,
       addComment, toggleRepLeave, reassignLeadsFromRep, addLeads,
       addReminder, removeReminder, reassignLead, setPriority,
-      addConnectNote, updateLeadStatus,
+      updateLeadStatus,
     }}>
       {children}
     </LeadsContext.Provider>

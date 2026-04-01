@@ -14,12 +14,6 @@ export interface Reminder {
   datetime: string; // ISO string e.g. "2026-03-26T10:00"
 }
 
-export interface ConnectNote {
-  id: string;
-  content: string;
-  user_name: string;
-  created_at: string;
-}
 
 export interface Lead {
   id: string;
@@ -39,7 +33,7 @@ export interface Lead {
   linkedin_profile_used: string | null;
   response_notes: string | null;
   reminders: Reminder[];
-  connect_notes: ConnectNote[];
+  connection_request_note: string;
   batch_id: string;
   upload_date: string;
   priority_color: PriorityColor;

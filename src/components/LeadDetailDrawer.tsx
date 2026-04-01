@@ -7,7 +7,7 @@ import PriorityDot from '@/components/PriorityDot';
 import ReassignModal from '@/components/ReassignModal';
 import StatusUpdateModal from '@/components/StatusUpdateModal';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
@@ -22,9 +22,8 @@ interface LeadDetailDrawerProps {
 }
 
 const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
-  const { updateLead, addComment, comments, addReminder, removeReminder, setPriority, addConnectNote, updateLeadStatus } = useLeads();
+  const { updateLead, addComment, comments, addReminder, removeReminder, setPriority, updateLeadStatus } = useLeads();
   const { user } = useAuth();
-  const [connectNote, setConnectNote] = useState('');
   const [comment, setComment] = useState('');
   const [reminderDate, setReminderDate] = useState('');
   const [reminderTime, setReminderTime] = useState('10:00');
@@ -44,11 +43,11 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
   const canReassign = user?.role === 'admin' || user?.role === 'sales_admin';
   const leadComments = comments.filter(c => c.lead_id === lead.id);
 
-  const handleStatusSubmit = (data: { status: LeadStatus; connectNote: string; priority?: PriorityColor }) => {
+  const handleStatusSubmit = (data: { status: LeadStatus; comment: string; priority?: PriorityColor }) => {
     if (!user) return;
     const roleLabel = user.role === 'admin' ? 'Admin' : user.role === 'sales_admin' ? 'Sales Admin' : 'Sales Rep';
-    if (data.connectNote) {
-      addConnectNote(lead.id, data.connectNote, user.name);
+    if (data.comment) {
+      addComment(lead.id, user.id, user.name, roleLabel, data.comment);
     }
     updateLeadStatus(lead.id, data.status, user.name, roleLabel, data.priority);
     if (data.priority) {
@@ -60,16 +59,6 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
     setStatusModalOpen(false);
   };
 
-  const handleAddConnectNote = () => {
-    if (!connectNote.trim() || !user || !isAssigned) return;
-    if (lead.connect_notes.length > 0) {
-      toast.error('Connect Note has already been submitted and cannot be modified');
-      return;
-    }
-    addConnectNote(lead.id, connectNote.trim(), user.name);
-    toast.success('Connect Note submitted');
-    setConnectNote('');
-  };
 
   const handleAddReminder = () => {
     if (!isAssigned) return toast.error('Only the assigned user can set reminders');
@@ -231,37 +220,13 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
             <Separator />
 
-            {/* Connect Note */}
+            {/* Connection Request Note (read-only from CSV) */}
             <section className="space-y-2">
-              <h3 className="text-sm font-semibold text-foreground">
-                Connect Note {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
-              </h3>
-              {lead.connect_notes.length > 0 ? (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {[...lead.connect_notes].reverse().map(note => (
-                    <div key={note.id} className="border-l-2 border-primary/30 pl-3 py-1">
-                      <p className="text-xs font-medium text-foreground">
-                        {note.user_name} — <span className="text-muted-foreground font-normal">{formatDate(note.created_at)}</span>
-                      </p>
-                      <p className="text-sm text-foreground mt-0.5">"{note.content}"</p>
-                    </div>
-                  ))}
-                  {isAssigned && (
-                    <p className="text-xs text-muted-foreground italic flex items-center gap-1">
-                      <Lock className="w-3 h-3" /> Connect Note has been submitted and is locked
-                    </p>
-                  )}
-                </div>
+              <h3 className="text-sm font-semibold text-foreground">Connection Request Note</h3>
+              {lead.connection_request_note ? (
+                <p className="text-sm text-muted-foreground leading-relaxed">{lead.connection_request_note}</p>
               ) : (
-                <>
-                  <p className="text-xs text-muted-foreground">No connect note yet</p>
-                  {isAssigned && (
-                    <div className="flex gap-2">
-                      <Textarea placeholder="Add your connect note (one-time only)..." value={connectNote} onChange={e => setConnectNote(e.target.value)} rows={2} className="text-sm" />
-                      <Button size="sm" className="h-auto self-end" onClick={handleAddConnectNote}>Submit</Button>
-                    </div>
-                  )}
-                </>
+                <p className="text-sm text-muted-foreground italic">No Connection Note Available</p>
               )}
             </section>
 

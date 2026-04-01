@@ -18,7 +18,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'AI Innovation & Growth Partnership',
     inmail_message: 'Hi Rachel, I came across your work at Stealth AI Startup and was impressed by the innovation in enterprise automation. We help AI-focused companies scale their outreach - would love to connect and share ideas.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -32,7 +32,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Healthtech Outreach Opportunity',
     inmail_message: 'Hi Ali, your work at MediShout in healthcare operations is truly impactful. We specialise in helping healthtech companies expand their B2B outreach - let us connect.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -46,7 +46,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Clinical AI & Sales Growth',
     inmail_message: 'Hi Ioannis, I noticed your work at Deontics in clinical decision support - fascinating space. We help health-AI companies like yours build strong sales pipelines. Would love to connect.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -60,7 +60,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'PropTech Growth Collaboration',
     inmail_message: 'Hi Jonathan, your work at AROai combining AI with property analytics is really compelling. We help proptech companies like yours accelerate B2B growth - let us connect.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -74,7 +74,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Digital Health Outreach Partnership',
     inmail_message: 'Hi Zoe, I was inspired by what Joyvie Health is doing for women\'s wellness. We help digital health companies scale outreach efficiently - would love to connect and share insights.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -88,7 +88,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Mental Health Tech & B2B Growth',
     inmail_message: 'Hi Oliver, Koa Health\'s work in digital mental health is really impressive. We help healthtech companies like yours expand B2B outreach - let us connect and explore synergies.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
 ];

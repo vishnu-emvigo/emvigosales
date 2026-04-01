@@ -37,7 +37,7 @@ const PRIORITY_DISPLAY: Record<PriorityColor, { emoji: string; label: string }> 
   red: { emoji: '🔴', label: 'Red' },
   amber: { emoji: '🟠', label: 'Amber' },
   green: { emoji: '🟢', label: 'Green' },
-  none: { emoji: '', label: '—' },
+  none: { emoji: '', label: 'No Priority Assigned' },
 };
 
 const TruncatedCell = ({ text, max = 60 }: { text: string; max?: number }) => {
@@ -160,7 +160,7 @@ const LeadsTable = ({
               {paginated.map(lead => {
                 const canSetPriority = canModifyLead(user?.name, lead);
                 const pd = PRIORITY_DISPLAY[lead.priority_color];
-                const latestNote = lead.connect_notes.length > 0 ? lead.connect_notes[lead.connect_notes.length - 1] : null;
+                const noteText = lead.connection_request_note;
                 return (
                   <tr
                     key={lead.id}
@@ -200,7 +200,7 @@ const LeadsTable = ({
                       <TruncatedCell text={lead.inmail_message} />
                     </td>
                     <td className="px-3 py-1.5 text-muted-foreground">
-                      {latestNote ? <TruncatedCell text={latestNote.content} max={40} /> : <span>—</span>}
+                      {noteText ? <TruncatedCell text={noteText} max={40} /> : <span className="italic text-muted-foreground">No Connection Note Available</span>}
                     </td>
                     <td className="px-3 py-1.5" onClick={e => e.stopPropagation()}>
                       {(() => {
