@@ -32,7 +32,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Healthtech Outreach Opportunity',
     inmail_message: 'Hi Ali, your work at MediShout in healthcare operations is truly impactful. We specialise in helping healthtech companies expand their B2B outreach - let us connect.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: 'Hi Ali, your healthtech platform is impressive — would love to connect and discuss hospital ops innovation.',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
