@@ -37,7 +37,7 @@ const PRIORITY_DISPLAY: Record<PriorityColor, { emoji: string; label: string }> 
   red: { emoji: '🔴', label: 'Red' },
   amber: { emoji: '🟠', label: 'Amber' },
   green: { emoji: '🟢', label: 'Green' },
-  none: { emoji: '', label: '—' },
+  none: { emoji: '', label: 'No Priority Assigned' },
 };
 
 const TruncatedCell = ({ text, max = 60 }: { text: string; max?: number }) => {
