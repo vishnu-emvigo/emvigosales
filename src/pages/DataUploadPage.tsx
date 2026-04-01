@@ -57,7 +57,7 @@ const DataUploadPage = () => {
             linkedin_profile_used: null,
             response_notes: null,
             reminders: [],
-            connect_notes: [],
+            connection_request_note: getVal('connection request note') || getVal('connection_request_note') || getVal('connect note') || getVal('connect_note') || '',
             batch_id: batchId,
             upload_date: today,
             priority_color: 'none' as const,

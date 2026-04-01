@@ -15,24 +15,23 @@ interface StatusUpdateModalProps {
   lead: Lead;
   onSubmit: (data: {
     status: LeadStatus;
-    connectNote: string;
+    comment: string;
     priority?: PriorityColor;
   }) => void;
 }
 
 const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalProps) => {
   const [status, setStatus] = useState<LeadStatus | ''>(lead.status);
-  const [connectNote, setConnectNote] = useState('');
+  const [comment, setComment] = useState('');
   const [priority, setPriority] = useState<PriorityColor | ''>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const needsPriority = COLOR_REQUIRED_STATUSES.includes(status as LeadStatus);
-  const hasExistingNote = lead.connect_notes.length > 0;
 
   const validate = () => {
     const errs: Record<string, string> = {};
     if (!status) errs.status = 'Status is required';
-    if (!hasExistingNote && !connectNote.trim()) errs.connectNote = 'Connect note is required';
+    if (!comment.trim()) errs.comment = 'Comment is required';
     if (needsPriority && !priority) errs.priority = 'Priority color is mandatory for this status';
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -42,16 +41,16 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
     if (!validate()) return;
     onSubmit({
       status: status as LeadStatus,
-      connectNote: hasExistingNote ? '' : connectNote.trim(),
+      comment: comment.trim(),
       priority: needsPriority ? (priority as PriorityColor) : undefined,
     });
-    setConnectNote('');
+    setComment('');
     setErrors({});
   };
 
   const handleClose = () => {
     setErrors({});
-    setConnectNote('');
+    setComment('');
     onClose();
   };
 
@@ -102,25 +101,18 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
             </div>
           )}
 
-          {/* Connect Note — only if not already submitted */}
-          {!hasExistingNote ? (
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium">Connect Note *</Label>
-              <Textarea
-                placeholder="Add a note about this status change..."
-                value={connectNote}
-                onChange={e => { setConnectNote(e.target.value); setErrors(er => ({ ...er, connectNote: '' })); }}
-                rows={3}
-                className="text-sm"
-              />
-              {errors.connectNote && <p className="text-xs text-destructive">{errors.connectNote}</p>}
-            </div>
-          ) : (
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium text-muted-foreground">Connect Note</Label>
-              <p className="text-xs text-muted-foreground italic">Already submitted and locked.</p>
-            </div>
-          )}
+          {/* Comment */}
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium">Comment *</Label>
+            <Textarea
+              placeholder="Add a comment about this status change..."
+              value={comment}
+              onChange={e => { setComment(e.target.value); setErrors(er => ({ ...er, comment: '' })); }}
+              rows={3}
+              className="text-sm"
+            />
+            {errors.comment && <p className="text-xs text-destructive">{errors.comment}</p>}
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>Cancel</Button>

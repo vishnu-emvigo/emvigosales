@@ -200,7 +200,7 @@ const LeadsTable = ({
                       <TruncatedCell text={lead.inmail_message} />
                     </td>
                     <td className="px-3 py-1.5 text-muted-foreground">
-                      {latestNote ? <TruncatedCell text={latestNote.content} max={40} /> : <span>—</span>}
+                      {noteText ? <TruncatedCell text={noteText} max={40} /> : <span className="italic text-muted-foreground">No Connection Note Available</span>}
                     </td>
                     <td className="px-3 py-1.5" onClick={e => e.stopPropagation()}>
                       {(() => {
