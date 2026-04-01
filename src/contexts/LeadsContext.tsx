@@ -153,21 +153,6 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setComments(prev => [...prev, systemComment]);
   }, []);
 
-  const addConnectNote = useCallback((leadId: string, content: string, userName: string) => {
-    setLeads(prev => {
-      const lead = prev.find(l => l.id === leadId);
-      if (lead && lead.connect_notes.length > 0) return prev;
-      const note: ConnectNote = {
-        id: `cn-${Date.now()}`,
-        content,
-        user_name: userName,
-        created_at: new Date().toISOString(),
-      };
-      return prev.map(l =>
-        l.id === leadId ? { ...l, connect_notes: [...l.connect_notes, note] } : l
-      );
-    });
-  }, []);
 
   const updateLeadStatus = useCallback((leadId: string, status: LeadStatus, userName: string, userRole: string, priority?: PriorityColor) => {
     setLeads(prev => prev.map(l =>
