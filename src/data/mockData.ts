@@ -88,7 +88,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Mental Health Tech & B2B Growth',
     inmail_message: 'Hi Oliver, Koa Health\'s work in digital mental health is really impressive. We help healthtech companies like yours expand B2B outreach - let us connect and explore synergies.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: 'Hi Oliver, digital mental health is so important — would love to connect and discuss B2B growth strategies.',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
 ];
