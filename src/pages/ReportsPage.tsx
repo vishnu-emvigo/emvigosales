@@ -153,15 +153,8 @@ const ReportsPage = () => {
             onChange={setSelectedUsers}
           />
 
-          {/* Message Type */}
-          <Select value={messageType} onValueChange={setMessageType}>
-            <SelectTrigger className="w-[130px] h-8 text-xs"><SelectValue placeholder="Message Type" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Message Type</SelectItem>
-              <SelectItem value="A">A</SelectItem>
-              <SelectItem value="B">B</SelectItem>
-            </SelectContent>
-          </Select>
+
+
 
           {/* Priority multi-select */}
           <MultiCheckboxDropdown
