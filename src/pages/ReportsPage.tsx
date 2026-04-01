@@ -55,12 +55,11 @@ const ReportsPage = () => {
     }
     if (selectedStatuses.length) result = result.filter(l => selectedStatuses.includes(l.status));
     if (selectedUsers.length) result = result.filter(l => l.assigned_to && selectedUsers.includes(l.assigned_to));
-    if (messageType !== 'all') result = result.filter(l => l.selected_message === messageType);
     if (selectedPriorities.length) result = result.filter(l => selectedPriorities.includes(l.priority_color));
     if (selectedBatches.length) result = result.filter(l => selectedBatches.includes(l.batch_id));
     if (selectedRegions.length) result = result.filter(l => selectedRegions.includes(l.location));
     return result;
-  }, [leads, dateFrom, dateTo, selectedStatuses, selectedUsers, messageType, selectedPriorities, selectedBatches, selectedRegions]);
+  }, [leads, dateFrom, dateTo, selectedStatuses, selectedUsers, selectedPriorities, selectedBatches, selectedRegions]);
 
   const clearFilters = () => {
     setDateFrom(undefined);
