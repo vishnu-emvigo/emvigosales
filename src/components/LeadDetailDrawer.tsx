@@ -59,16 +59,6 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
     setStatusModalOpen(false);
   };
 
-  const handleAddConnectNote = () => {
-    if (!connectNote.trim() || !user || !isAssigned) return;
-    if (lead.connect_notes.length > 0) {
-      toast.error('Connect Note has already been submitted and cannot be modified');
-      return;
-    }
-    addConnectNote(lead.id, connectNote.trim(), user.name);
-    toast.success('Connect Note submitted');
-    setConnectNote('');
-  };
 
   const handleAddReminder = () => {
     if (!isAssigned) return toast.error('Only the assigned user can set reminders');
