@@ -46,7 +46,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Clinical AI & Sales Growth',
     inmail_message: 'Hi Ioannis, I noticed your work at Deontics in clinical decision support - fascinating space. We help health-AI companies like yours build strong sales pipelines. Would love to connect.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
