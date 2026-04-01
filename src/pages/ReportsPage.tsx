@@ -272,7 +272,6 @@ const ReportsPage = () => {
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.location}</td>
                     <td className="px-3 py-1.5 text-muted-foreground">{STATUS_LABELS[lead.status]}</td>
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.assigned_to || 'Unassigned'}</td>
-                    <td className="px-3 py-1.5 text-muted-foreground">{lead.selected_message || '—'}</td>
                     <td className="px-3 py-1.5">
                       <span className="inline-flex items-center gap-1 text-xs">
                         {pd.emoji && <span>{pd.emoji}</span>}
