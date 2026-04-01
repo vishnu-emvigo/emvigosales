@@ -18,7 +18,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'AI Innovation & Growth Partnership',
     inmail_message: 'Hi Rachel, I came across your work at Stealth AI Startup and was impressed by the innovation in enterprise automation. We help AI-focused companies scale their outreach - would love to connect and share ideas.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: 'Hi Rachel, loved your AI work — would be great to connect and exchange ideas on enterprise automation.',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -32,7 +32,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Healthtech Outreach Opportunity',
     inmail_message: 'Hi Ali, your work at MediShout in healthcare operations is truly impactful. We specialise in helping healthtech companies expand their B2B outreach - let us connect.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: 'Hi Ali, your healthtech platform is impressive — would love to connect and discuss hospital ops innovation.',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -46,7 +46,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Clinical AI & Sales Growth',
     inmail_message: 'Hi Ioannis, I noticed your work at Deontics in clinical decision support - fascinating space. We help health-AI companies like yours build strong sales pipelines. Would love to connect.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: 'Hi Ioannis, clinical decision support is a fascinating space — keen to connect and learn more about Deontics.',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -60,7 +60,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'PropTech Growth Collaboration',
     inmail_message: 'Hi Jonathan, your work at AROai combining AI with property analytics is really compelling. We help proptech companies like yours accelerate B2B growth - let us connect.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: 'Hi Jonathan, AI meets real estate is a brilliant combo — would love to connect and explore synergies.',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
@@ -88,7 +88,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Mental Health Tech & B2B Growth',
     inmail_message: 'Hi Oliver, Koa Health\'s work in digital mental health is really impressive. We help healthtech companies like yours expand B2B outreach - let us connect and explore synergies.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: 'Hi Oliver, digital mental health is so important — would love to connect and discuss B2B growth strategies.',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
 ];
