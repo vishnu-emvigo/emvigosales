@@ -74,7 +74,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'Digital Health Outreach Partnership',
     inmail_message: 'Hi Zoe, I was inspired by what Joyvie Health is doing for women\'s wellness. We help digital health companies scale outreach efficiently - would love to connect and share insights.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connect_notes: [],
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
