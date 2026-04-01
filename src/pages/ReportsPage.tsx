@@ -66,7 +66,6 @@ const ReportsPage = () => {
     setDateTo(undefined);
     setSelectedStatuses([]);
     setSelectedUsers([]);
-    setMessageType('all');
     setSelectedPriorities([]);
     setSelectedBatches([]);
     setSelectedRegions([]);
