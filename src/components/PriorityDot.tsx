@@ -13,7 +13,7 @@ const LABELS: Record<PriorityColor, string> = {
   red: 'Red',
   amber: 'Amber',
   green: 'Green',
-  none: 'No Priority',
+  none: 'No Priority Assigned',
 };
 
 interface PriorityDotProps {
