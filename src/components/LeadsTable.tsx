@@ -160,7 +160,7 @@ const LeadsTable = ({
               {paginated.map(lead => {
                 const canSetPriority = canModifyLead(user?.name, lead);
                 const pd = PRIORITY_DISPLAY[lead.priority_color];
-                const latestNote = lead.connect_notes.length > 0 ? lead.connect_notes[lead.connect_notes.length - 1] : null;
+                const noteText = lead.connection_request_note;
                 return (
                   <tr
                     key={lead.id}
