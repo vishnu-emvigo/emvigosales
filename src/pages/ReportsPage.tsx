@@ -30,7 +30,7 @@ const ReportsPage = () => {
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [messageType, setMessageType] = useState('all');
+  const [_messageType, _setMessageType] = useState('all');
   const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
   const [selectedBatches, setSelectedBatches] = useState<string[]>([]);
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);

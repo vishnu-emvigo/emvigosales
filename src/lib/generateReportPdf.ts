@@ -8,7 +8,6 @@ interface ReportFilters {
   dateTo?: string;
   statuses: string[];
   assignedUsers: string[];
-  messageType: string;
   priorities: string[];
   batchIds: string[];
   regions: string[];
@@ -43,7 +42,6 @@ export function generateReportPdf(
   if (filters.dateFrom || filters.dateTo) filterParts.push(`Date: ${filters.dateFrom || '…'} → ${filters.dateTo || '…'}`);
   if (filters.statuses.length) filterParts.push(`Status: ${filters.statuses.map(s => STATUS_LABELS[s as LeadStatus] || s).join(', ')}`);
   if (filters.assignedUsers.length) filterParts.push(`Assigned: ${filters.assignedUsers.join(', ')}`);
-  if (filters.messageType !== 'all') filterParts.push(`Message Type: ${filters.messageType}`);
   if (filters.priorities.length) filterParts.push(`Priority: ${filters.priorities.join(', ')}`);
   if (filters.batchIds.length) filterParts.push(`Batch: ${filters.batchIds.join(', ')}`);
   if (filters.regions.length) filterParts.push(`Region: ${filters.regions.join(', ')}`);
@@ -96,7 +94,7 @@ export function generateReportPdf(
   });
   y = (doc as any).lastAutoTable.finalY + 8;
 
-  // Status breakdown beside KPIs
+  // Status breakdown
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.text('Status Breakdown', 110, (doc as any).lastAutoTable.startY);
@@ -153,14 +151,13 @@ export function generateReportPdf(
     l.location,
     STATUS_LABELS[l.status],
     l.assigned_to || 'Unassigned',
-    l.selected_message || '—',
     PRIORITY_LABELS[l.priority_color],
     l.last_action_at ? new Date(l.last_action_at).toLocaleDateString() : '—',
   ]);
 
   autoTable(doc, {
     startY: y,
-    head: [['Full Name', 'Company', 'Region', 'Status', 'Assigned', 'Msg Type', 'Priority', 'Last Activity']],
+    head: [['Full Name', 'Company', 'Region', 'Status', 'Assigned', 'Priority', 'Last Activity']],
     body: detailRows,
     theme: 'grid',
     headStyles: { fillColor: [88, 80, 236], fontSize: 7 },
@@ -179,23 +176,9 @@ export function generateReportPdf(
 
   const insights: string[] = [];
 
-  // Priority insight
   const requestAccepted = filteredLeads.filter(l => l.status === 'request_accepted');
   const redInAccepted = requestAccepted.filter(l => l.priority_color === 'red').length;
   if (redInAccepted > 0) insights.push(`⚠ ${redInAccepted} Red-priority lead(s) in Request Accepted stage — requires immediate attention.`);
-
-  // Message type comparison
-  const msgAResponse = filteredLeads.filter(l => l.selected_message === 'A' && l.status === 'response_back').length;
-  const msgBResponse = filteredLeads.filter(l => l.selected_message === 'B' && l.status === 'response_back').length;
-  const msgATotal = filteredLeads.filter(l => l.selected_message === 'A').length;
-  const msgBTotal = filteredLeads.filter(l => l.selected_message === 'B').length;
-  const msgARate = msgATotal ? Math.round((msgAResponse / msgATotal) * 100) : 0;
-  const msgBRate = msgBTotal ? Math.round((msgBResponse / msgBTotal) * 100) : 0;
-  if (msgATotal > 0 && msgBTotal > 0) {
-    if (msgBRate > msgARate) insights.push(`📈 Message Type B showing higher response rate (${msgBRate}%) vs Type A (${msgARate}%).`);
-    else if (msgARate > msgBRate) insights.push(`📈 Message Type A showing higher response rate (${msgARate}%) vs Type B (${msgBRate}%).`);
-    else insights.push(`📊 Message Type A and B showing equal response rates (${msgARate}%).`);
-  }
 
   // Top performing rep
   if (reps.length > 0) {
@@ -210,11 +193,9 @@ export function generateReportPdf(
     if (topRate > 0) insights.push(`🏆 ${topRep.name} leading in conversions with ${Math.round(topRate)}% response rate.`);
   }
 
-  // Unassigned
   const unassigned = filteredLeads.filter(l => !l.assigned_to).length;
   if (unassigned > 0) insights.push(`📋 ${unassigned} lead(s) remain unassigned.`);
 
-  // Amber pending
   const amberPending = filteredLeads.filter(l => l.priority_color === 'amber' && l.reminders.length > 0).length;
   if (amberPending > 0) insights.push(`🔔 ${amberPending} Amber lead(s) have pending reminders.`);
 
