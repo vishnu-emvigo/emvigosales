@@ -40,7 +40,6 @@ const PRIORITY_DISPLAY: Record<PriorityColor, { emoji: string; label: string }> 
   none: { emoji: '', label: '—' },
 };
 
-/** Reusable truncated cell with tooltip */
 const TruncatedCell = ({ text, max = 60 }: { text: string; max?: number }) => {
   if (!text) return <span className="text-muted-foreground">—</span>;
   return (
@@ -63,7 +62,6 @@ const LeadsTable = ({
   const [search, setSearch] = useState('');
   const [assignedFilter, setAssignedFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
-  const [messageTypeFilter, setMessageTypeFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
 
   const assignedUsers = useMemo(() => {
@@ -83,11 +81,10 @@ const LeadsTable = ({
     }
     if (assignedFilter !== 'all') result = result.filter(l => l.assigned_to === assignedFilter);
     if (priorityFilter !== 'all') result = result.filter(l => l.priority_color === priorityFilter);
-    if (messageTypeFilter !== 'all') result = result.filter(l => l.selected_message === messageTypeFilter);
     const priorityOrder: Record<PriorityColor, number> = { red: 0, amber: 1, green: 2, none: 3 };
     result = [...result].sort((a, b) => priorityOrder[a.priority_color] - priorityOrder[b.priority_color]);
     return result;
-  }, [leads, search, assignedFilter, priorityFilter, messageTypeFilter]);
+  }, [leads, search, assignedFilter, priorityFilter]);
 
   const totalPages = Math.ceil(filtered.length / pageSize);
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -103,7 +100,7 @@ const LeadsTable = ({
     onSelectionChange(selectedIds.includes(id) ? selectedIds.filter(i => i !== id) : [...selectedIds, id]);
   };
 
-  const colCount = (selectable ? 1 : 0) + 14;
+  const colCount = (selectable ? 1 : 0) + 12;
 
   return (
     <div className="space-y-3">
@@ -123,14 +120,6 @@ const LeadsTable = ({
             <SelectItem value="none">No Priority</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={messageTypeFilter} onValueChange={v => { setMessageTypeFilter(v); setPage(1); }}>
-          <SelectTrigger className="w-[150px] h-8 text-xs"><SelectValue placeholder="Message Type" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Message Type</SelectItem>
-            <SelectItem value="A">A</SelectItem>
-            <SelectItem value="B">B</SelectItem>
-          </SelectContent>
-        </Select>
         {assignedUsers.length > 0 && (
           <Select value={assignedFilter} onValueChange={v => { setAssignedFilter(v); setPage(1); }}>
             <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue placeholder="Assigned User" /></SelectTrigger>
@@ -147,7 +136,7 @@ const LeadsTable = ({
       {/* Table */}
       <div className="border border-border rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-xs" style={{ minWidth: '1800px' }}>
+          <table className="w-full text-xs" style={{ minWidth: '1600px' }}>
             <thead>
               <tr className="bg-muted/50 border-b border-border sticky top-0 z-10">
                 {selectable && (
@@ -161,10 +150,8 @@ const LeadsTable = ({
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">Company Profile</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">Person Summary</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[130px]">InMail Subject</th>
-                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">InMail Message A</th>
-                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[180px]">InMail Message B</th>
+                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[200px]">InMail Message</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[160px]">Connection Request Note</th>
-                <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[130px]">InMail Message Type Sent</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[90px]">Priority</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap min-w-[120px]">Assigned User Name</th>
               </tr>
@@ -185,13 +172,9 @@ const LeadsTable = ({
                         <Checkbox checked={selectedIds.includes(lead.id)} onCheckedChange={() => toggleOne(lead.id)} />
                       </td>
                     )}
-                    {/* Serial Number */}
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.sr_no}</td>
-                    {/* Full Name */}
                     <td className="px-3 py-1.5 font-medium text-foreground whitespace-nowrap">{lead.full_name}</td>
-                    {/* Company */}
                     <td className="px-3 py-1.5 text-foreground whitespace-nowrap">{lead.company}</td>
-                    {/* LinkedIn URL */}
                     <td className="px-3 py-1.5" onClick={e => e.stopPropagation()}>
                       <a
                         href={lead.linkedin_url}
@@ -203,35 +186,22 @@ const LeadsTable = ({
                         <ExternalLink className="w-3 h-3 flex-shrink-0" />
                       </a>
                     </td>
-                    {/* Region */}
                     <td className="px-3 py-1.5 text-muted-foreground whitespace-nowrap">{lead.location}</td>
-                    {/* Company Profile */}
                     <td className="px-3 py-1.5 text-muted-foreground">
                       <TruncatedCell text={lead.company_profile} />
                     </td>
-                    {/* Person Summary */}
                     <td className="px-3 py-1.5 text-muted-foreground">
                       <TruncatedCell text={lead.person_summary} />
                     </td>
-                    {/* InMail Subject */}
                     <td className="px-3 py-1.5 text-muted-foreground">
                       <TruncatedCell text={lead.inmail_subject} max={40} />
                     </td>
-                    {/* InMail Message A */}
                     <td className="px-3 py-1.5 text-muted-foreground">
-                      <TruncatedCell text={lead.message_a} />
+                      <TruncatedCell text={lead.inmail_message} />
                     </td>
-                    {/* InMail Message B */}
-                    <td className="px-3 py-1.5 text-muted-foreground">
-                      <TruncatedCell text={lead.message_b} />
-                    </td>
-                    {/* Connection Request Note */}
                     <td className="px-3 py-1.5 text-muted-foreground">
                       {latestNote ? <TruncatedCell text={latestNote.content} max={40} /> : <span>—</span>}
                     </td>
-                    {/* InMail Message Type Sent */}
-                    <td className="px-3 py-1.5 text-muted-foreground">{lead.selected_message || '—'}</td>
-                    {/* Priority */}
                     <td className="px-3 py-1.5" onClick={e => e.stopPropagation()}>
                       {(() => {
                         const colorEligible = lead.status === 'request_accepted' || lead.status === 'response_back';
@@ -265,7 +235,6 @@ const LeadsTable = ({
                         );
                       })()}
                     </td>
-                    {/* Assigned User Name */}
                     <td className="px-3 py-1.5 text-muted-foreground whitespace-nowrap">{lead.assigned_to || 'Unassigned'}</td>
                   </tr>
                 );

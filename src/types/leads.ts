@@ -31,13 +31,11 @@ export interface Lead {
   company_profile: string;
   person_summary: string;
   inmail_subject: string;
-  message_a: string;
-  message_b: string;
+  inmail_message: string;
   status: LeadStatus;
   assigned_to: string | null;
   assigned_at: string | null;
   last_action_at: string | null;
-  selected_message: 'A' | 'B' | null;
   linkedin_profile_used: string | null;
   response_notes: string | null;
   reminders: Reminder[];
