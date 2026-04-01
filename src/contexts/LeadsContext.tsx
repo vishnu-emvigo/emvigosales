@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Lead, Comment, SalesRep, LeadStatus, Reminder, PriorityColor, ConnectNote, STATUS_LABELS } from '@/types/leads';
+import { Lead, Comment, SalesRep, LeadStatus, Reminder, PriorityColor, STATUS_LABELS } from '@/types/leads';
 import { INITIAL_LEADS, INITIAL_REPS, INITIAL_COMMENTS } from '@/data/mockData';
 
 interface LeadsContextType {
