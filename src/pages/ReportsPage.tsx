@@ -40,7 +40,7 @@ const ReportsPage = () => {
   const allBatches = useMemo(() => [...new Set(leads.map(l => l.batch_id))].sort(), [leads]);
   const allRegions = useMemo(() => [...new Set(leads.map(l => l.location).filter(Boolean))].sort(), [leads]);
 
-  const hasActiveFilters = !!(dateFrom || dateTo || selectedStatuses.length || selectedUsers.length || messageType !== 'all' || selectedPriorities.length || selectedBatches.length || selectedRegions.length);
+  const hasActiveFilters = !!(dateFrom || dateTo || selectedStatuses.length || selectedUsers.length || selectedPriorities.length || selectedBatches.length || selectedRegions.length);
 
   // Filtered leads
   const filtered = useMemo(() => {
