@@ -261,7 +261,7 @@ const ReportsPage = () => {
             </thead>
             <tbody>
               {filtered.length === 0 && (
-                <tr><td colSpan={9} className="px-3 py-10 text-center text-muted-foreground">No leads match current filters</td></tr>
+                <tr><td colSpan={8} className="px-3 py-10 text-center text-muted-foreground">No leads match current filters</td></tr>
               )}
               {filtered.map(lead => {
                 const pd = PRIORITY_DISPLAY[lead.priority_color];
