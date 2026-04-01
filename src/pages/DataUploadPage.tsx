@@ -36,6 +36,9 @@ const DataUploadPage = () => {
             return idx >= 0 ? values[idx] || '' : '';
           };
 
+          // Support legacy message_a / message_b by merging into single inmail_message
+          const inmail_message = getVal('inmail message') || getVal('inmail_message') || getVal('message a') || getVal('message_a') || '';
+
           return {
             id: `lead-${Date.now()}-${i}`,
             sr_no: startSrNo + i,
@@ -46,13 +49,11 @@ const DataUploadPage = () => {
             company_profile: getVal('company profile') || getVal('company_profile') || '',
             person_summary: getVal('person summary') || getVal('person_summary') || '',
             inmail_subject: getVal('inmail subject') || getVal('inmail_subject') || '',
-            message_a: getVal('message a') || getVal('message_a') || '',
-            message_b: getVal('message b') || getVal('message_b') || '',
+            inmail_message,
             status: 'not_assigned' as const,
             assigned_to: null,
             assigned_at: null,
             last_action_at: null,
-            selected_message: null,
             linkedin_profile_used: null,
             response_notes: null,
             reminders: [],
@@ -85,7 +86,7 @@ const DataUploadPage = () => {
           <FileSpreadsheet className="w-10 h-10 text-muted-foreground mx-auto" />
           <div>
             <p className="text-sm font-medium text-foreground">Upload CSV file</p>
-            <p className="text-xs text-muted-foreground mt-1">Required: LinkedIn URL, Full Name, Company, Location, Company Profile, Person Summary, Message A, Message B</p>
+            <p className="text-xs text-muted-foreground mt-1">Required: LinkedIn URL, Full Name, Company, Location, Company Profile, Person Summary, InMail Message</p>
           </div>
           <Input ref={fileRef} type="file" accept=".csv" className="max-w-xs mx-auto" />
           <Button onClick={handleUpload} disabled={uploading} className="gap-2">

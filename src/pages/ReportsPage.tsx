@@ -30,7 +30,7 @@ const ReportsPage = () => {
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [messageType, setMessageType] = useState('all');
+  
   const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
   const [selectedBatches, setSelectedBatches] = useState<string[]>([]);
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
@@ -40,7 +40,7 @@ const ReportsPage = () => {
   const allBatches = useMemo(() => [...new Set(leads.map(l => l.batch_id))].sort(), [leads]);
   const allRegions = useMemo(() => [...new Set(leads.map(l => l.location).filter(Boolean))].sort(), [leads]);
 
-  const hasActiveFilters = !!(dateFrom || dateTo || selectedStatuses.length || selectedUsers.length || messageType !== 'all' || selectedPriorities.length || selectedBatches.length || selectedRegions.length);
+  const hasActiveFilters = !!(dateFrom || dateTo || selectedStatuses.length || selectedUsers.length || selectedPriorities.length || selectedBatches.length || selectedRegions.length);
 
   // Filtered leads
   const filtered = useMemo(() => {
@@ -55,19 +55,17 @@ const ReportsPage = () => {
     }
     if (selectedStatuses.length) result = result.filter(l => selectedStatuses.includes(l.status));
     if (selectedUsers.length) result = result.filter(l => l.assigned_to && selectedUsers.includes(l.assigned_to));
-    if (messageType !== 'all') result = result.filter(l => l.selected_message === messageType);
     if (selectedPriorities.length) result = result.filter(l => selectedPriorities.includes(l.priority_color));
     if (selectedBatches.length) result = result.filter(l => selectedBatches.includes(l.batch_id));
     if (selectedRegions.length) result = result.filter(l => selectedRegions.includes(l.location));
     return result;
-  }, [leads, dateFrom, dateTo, selectedStatuses, selectedUsers, messageType, selectedPriorities, selectedBatches, selectedRegions]);
+  }, [leads, dateFrom, dateTo, selectedStatuses, selectedUsers, selectedPriorities, selectedBatches, selectedRegions]);
 
   const clearFilters = () => {
     setDateFrom(undefined);
     setDateTo(undefined);
     setSelectedStatuses([]);
     setSelectedUsers([]);
-    setMessageType('all');
     setSelectedPriorities([]);
     setSelectedBatches([]);
     setSelectedRegions([]);
@@ -155,15 +153,8 @@ const ReportsPage = () => {
             onChange={setSelectedUsers}
           />
 
-          {/* Message Type */}
-          <Select value={messageType} onValueChange={setMessageType}>
-            <SelectTrigger className="w-[130px] h-8 text-xs"><SelectValue placeholder="Message Type" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Message Type</SelectItem>
-              <SelectItem value="A">A</SelectItem>
-              <SelectItem value="B">B</SelectItem>
-            </SelectContent>
-          </Select>
+
+
 
           {/* Priority multi-select */}
           <MultiCheckboxDropdown
@@ -263,7 +254,6 @@ const ReportsPage = () => {
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Region</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Status</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Assigned User</th>
-                <th className="px-3 py-2 text-left font-medium text-muted-foreground">Message Type</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Priority</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Reminders</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap">Last Activity</th>
@@ -271,7 +261,7 @@ const ReportsPage = () => {
             </thead>
             <tbody>
               {filtered.length === 0 && (
-                <tr><td colSpan={9} className="px-3 py-10 text-center text-muted-foreground">No leads match current filters</td></tr>
+                <tr><td colSpan={8} className="px-3 py-10 text-center text-muted-foreground">No leads match current filters</td></tr>
               )}
               {filtered.map(lead => {
                 const pd = PRIORITY_DISPLAY[lead.priority_color];
@@ -282,7 +272,6 @@ const ReportsPage = () => {
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.location}</td>
                     <td className="px-3 py-1.5 text-muted-foreground">{STATUS_LABELS[lead.status]}</td>
                     <td className="px-3 py-1.5 text-muted-foreground">{lead.assigned_to || 'Unassigned'}</td>
-                    <td className="px-3 py-1.5 text-muted-foreground">{lead.selected_message || '—'}</td>
                     <td className="px-3 py-1.5">
                       <span className="inline-flex items-center gap-1 text-xs">
                         {pd.emoji && <span>{pd.emoji}</span>}

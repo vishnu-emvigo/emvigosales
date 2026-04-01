@@ -21,7 +21,7 @@ interface LeadsContextType {
   reassignLead: (leadId: string, newAssignee: string, newLinkedin: string, reason: string, performedBy: string) => void;
   setPriority: (leadId: string, priority: PriorityColor, userName: string) => void;
   addConnectNote: (leadId: string, content: string, userName: string) => void;
-  updateLeadStatus: (leadId: string, status: LeadStatus, messageType: 'A' | 'B', userName: string, userRole: string, priority?: PriorityColor) => void;
+  updateLeadStatus: (leadId: string, status: LeadStatus, userName: string, userRole: string, priority?: PriorityColor) => void;
 }
 
 const LeadsContext = createContext<LeadsContextType | null>(null);
@@ -157,7 +157,6 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const addConnectNote = useCallback((leadId: string, content: string, userName: string) => {
     setLeads(prev => {
       const lead = prev.find(l => l.id === leadId);
-      // Enforce one-time-only rule: if a connect note already exists, block addition
       if (lead && lead.connect_notes.length > 0) return prev;
       const note: ConnectNote = {
         id: `cn-${Date.now()}`,
@@ -171,17 +170,15 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   }, []);
 
-  const updateLeadStatus = useCallback((leadId: string, status: LeadStatus, messageType: 'A' | 'B', userName: string, userRole: string, priority?: PriorityColor) => {
+  const updateLeadStatus = useCallback((leadId: string, status: LeadStatus, userName: string, userRole: string, priority?: PriorityColor) => {
     setLeads(prev => prev.map(l =>
       l.id === leadId ? {
         ...l,
         status,
-        selected_message: messageType,
         last_action_at: new Date().toISOString(),
         ...(priority ? { priority_color: priority } : {}),
       } : l
     ));
-    // Add a system comment logging the status change
     const priorityLabel = priority ? ` — Priority: ${priority}` : '';
     const systemComment: Comment = {
       id: `c-sys-${Date.now()}`,
@@ -189,7 +186,7 @@ export const LeadsProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       user_id: 'system',
       user_name: 'System',
       user_role: 'System',
-      content: `Status updated to ${STATUS_LABELS[status]} (Message ${messageType}) by ${userName}${priorityLabel}`,
+      content: `Status updated to ${STATUS_LABELS[status]} by ${userName}${priorityLabel}`,
       created_at: new Date().toISOString(),
     };
     setComments(prev => [...prev, systemComment]);

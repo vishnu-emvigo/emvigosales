@@ -15,7 +15,6 @@ interface StatusUpdateModalProps {
   lead: Lead;
   onSubmit: (data: {
     status: LeadStatus;
-    messageType: 'A' | 'B';
     connectNote: string;
     priority?: PriorityColor;
   }) => void;
@@ -23,7 +22,6 @@ interface StatusUpdateModalProps {
 
 const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalProps) => {
   const [status, setStatus] = useState<LeadStatus | ''>(lead.status);
-  const [messageType, setMessageType] = useState<'A' | 'B' | ''>(lead.selected_message || '');
   const [connectNote, setConnectNote] = useState('');
   const [priority, setPriority] = useState<PriorityColor | ''>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -34,7 +32,6 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
   const validate = () => {
     const errs: Record<string, string> = {};
     if (!status) errs.status = 'Status is required';
-    if (!messageType) errs.messageType = 'Message type must be selected';
     if (!hasExistingNote && !connectNote.trim()) errs.connectNote = 'Connect note is required';
     if (needsPriority && !priority) errs.priority = 'Priority color is mandatory for this status';
     setErrors(errs);
@@ -45,7 +42,6 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
     if (!validate()) return;
     onSubmit({
       status: status as LeadStatus,
-      messageType: messageType as 'A' | 'B',
       connectNote: hasExistingNote ? '' : connectNote.trim(),
       priority: needsPriority ? (priority as PriorityColor) : undefined,
     });
@@ -82,31 +78,7 @@ const StatusUpdateModal = ({ open, onClose, lead, onSubmit }: StatusUpdateModalP
             {errors.status && <p className="text-xs text-destructive">{errors.status}</p>}
           </div>
 
-          {/* Message Type */}
-          <div className="space-y-1.5">
-            <Label className="text-sm font-medium">Inmail Message Type *</Label>
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant={messageType === 'A' ? 'default' : 'outline'}
-                className="flex-1 h-9 text-sm"
-                onClick={() => { setMessageType('A'); setErrors(e => ({ ...e, messageType: '' })); }}
-              >
-                A — Direct & Bold
-              </Button>
-              <Button
-                type="button"
-                variant={messageType === 'B' ? 'default' : 'outline'}
-                className="flex-1 h-9 text-sm"
-                onClick={() => { setMessageType('B'); setErrors(e => ({ ...e, messageType: '' })); }}
-              >
-                B — Consultative & Warm
-              </Button>
-            </div>
-            {errors.messageType && <p className="text-xs text-destructive">{errors.messageType}</p>}
-          </div>
-
-          {/* Priority (only for request_accepted) */}
+          {/* Priority (only for request_accepted / response_back) */}
           {needsPriority && (
             <div className="space-y-1.5">
               <Label className="text-sm font-medium">Priority *</Label>

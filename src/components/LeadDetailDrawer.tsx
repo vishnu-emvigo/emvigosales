@@ -44,13 +44,13 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
   const canReassign = user?.role === 'admin' || user?.role === 'sales_admin';
   const leadComments = comments.filter(c => c.lead_id === lead.id);
 
-  const handleStatusSubmit = (data: { status: LeadStatus; messageType: 'A' | 'B'; connectNote: string; priority?: PriorityColor }) => {
+  const handleStatusSubmit = (data: { status: LeadStatus; connectNote: string; priority?: PriorityColor }) => {
     if (!user) return;
     const roleLabel = user.role === 'admin' ? 'Admin' : user.role === 'sales_admin' ? 'Sales Admin' : 'Sales Rep';
     if (data.connectNote) {
       addConnectNote(lead.id, data.connectNote, user.name);
     }
-    updateLeadStatus(lead.id, data.status, data.messageType, user.name, roleLabel, data.priority);
+    updateLeadStatus(lead.id, data.status, user.name, roleLabel, data.priority);
     if (data.priority) {
       const labels: Record<PriorityColor, string> = { red: 'Red', amber: 'Amber', green: 'Green', none: 'None' };
       toast.success(`Status updated to ${STATUS_LABELS[data.status]} — Priority: ${labels[data.priority]}`);
@@ -103,11 +103,6 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
             <div className="flex items-center gap-2">
               <StatusBadge status={lead.status} />
               <PriorityDot priority={lead.priority_color} size="md" />
-              {lead.selected_message && (
-                <span className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">
-                  Msg {lead.selected_message}
-                </span>
-              )}
               {!isAssigned && (
                 <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
                   <Lock className="w-3 h-3" /> Read-only
@@ -142,7 +137,7 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
             <Separator />
 
-            {/* Priority — only editable if assigned AND status is request_accepted or response_back */}
+            {/* Priority */}
             <section className="space-y-2">
               <h3 className="text-sm font-semibold text-foreground">
                 Priority {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
@@ -204,30 +199,22 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
             <Separator />
 
-            {/* Messaging */}
+            {/* InMail Message */}
             <section className="space-y-3">
-              <h3 className="text-sm font-semibold text-foreground">Messaging</h3>
+              <h3 className="text-sm font-semibold text-foreground">InMail Message</h3>
               <div className="space-y-2">
-                <div className={`p-3 rounded-lg border text-sm ${lead.selected_message === 'A' ? 'border-primary bg-primary/5' : 'border-border'}`}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-muted-foreground">Message A — Direct & Bold</span>
-                    {lead.selected_message === 'A' && <span className="text-xs font-medium text-primary">✓ Selected</span>}
+                <div className="p-3 rounded-lg border border-border text-sm">
+                  <div className="mb-1">
+                    <span className="text-xs font-medium text-muted-foreground">Subject: {lead.inmail_subject}</span>
                   </div>
-                  <p className="text-foreground">{lead.message_a}</p>
-                </div>
-                <div className={`p-3 rounded-lg border text-sm ${lead.selected_message === 'B' ? 'border-primary bg-primary/5' : 'border-border'}`}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-muted-foreground">Message B — Consultative & Warm</span>
-                    {lead.selected_message === 'B' && <span className="text-xs font-medium text-primary">✓ Selected</span>}
-                  </div>
-                  <p className="text-foreground">{lead.message_b}</p>
+                  <p className="text-foreground">{lead.inmail_message}</p>
                 </div>
               </div>
             </section>
 
             <Separator />
 
-            {/* Status — now uses modal */}
+            {/* Status */}
             <section className="space-y-2">
               <h3 className="text-sm font-semibold text-foreground">
                 Status {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
@@ -244,7 +231,7 @@ const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
 
             <Separator />
 
-            {/* Connect Note — One-time only */}
+            {/* Connect Note */}
             <section className="space-y-2">
               <h3 className="text-sm font-semibold text-foreground">
                 Connect Note {!isAssigned && <span className="text-xs text-muted-foreground font-normal">(view only)</span>}
