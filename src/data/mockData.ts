@@ -60,7 +60,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'PropTech Growth Collaboration',
     inmail_message: 'Hi Jonathan, your work at AROai combining AI with property analytics is really compelling. We help proptech companies like yours accelerate B2B growth - let us connect.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: 'Hi Jonathan, AI meets real estate is a brilliant combo — would love to connect and explore synergies.',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
