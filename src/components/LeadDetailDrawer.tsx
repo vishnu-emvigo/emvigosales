@@ -7,7 +7,7 @@ import PriorityDot from '@/components/PriorityDot';
 import ReassignModal from '@/components/ReassignModal';
 import StatusUpdateModal from '@/components/StatusUpdateModal';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
