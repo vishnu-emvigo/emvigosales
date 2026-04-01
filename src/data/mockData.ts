@@ -18,7 +18,7 @@ export const INITIAL_LEADS: Lead[] = [
     inmail_subject: 'AI Innovation & Growth Partnership',
     inmail_message: 'Hi Rachel, I came across your work at Stealth AI Startup and was impressed by the innovation in enterprise automation. We help AI-focused companies scale their outreach - would love to connect and share ideas.',
     status: 'not_assigned', assigned_to: null, assigned_at: null, last_action_at: null,
-    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: '',
+    linkedin_profile_used: null, response_notes: null, reminders: [], connection_request_note: 'Hi Rachel, loved your AI work — would be great to connect and exchange ideas on enterprise automation.',
     batch_id: 'BATCH-001', upload_date: new Date().toISOString().split('T')[0], priority_color: 'none',
   },
   {
