@@ -254,7 +254,6 @@ const ReportsPage = () => {
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Region</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Status</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Assigned User</th>
-                <th className="px-3 py-2 text-left font-medium text-muted-foreground">Message Type</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Priority</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground">Reminders</th>
                 <th className="px-3 py-2 text-left font-medium text-muted-foreground whitespace-nowrap">Last Activity</th>
