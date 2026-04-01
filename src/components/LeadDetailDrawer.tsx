@@ -22,9 +22,8 @@ interface LeadDetailDrawerProps {
 }
 
 const LeadDetailDrawer = ({ lead, open, onClose }: LeadDetailDrawerProps) => {
-  const { updateLead, addComment, comments, addReminder, removeReminder, setPriority, addConnectNote, updateLeadStatus } = useLeads();
+  const { updateLead, addComment, comments, addReminder, removeReminder, setPriority, updateLeadStatus } = useLeads();
   const { user } = useAuth();
-  const [connectNote, setConnectNote] = useState('');
   const [comment, setComment] = useState('');
   const [reminderDate, setReminderDate] = useState('');
   const [reminderTime, setReminderTime] = useState('10:00');
